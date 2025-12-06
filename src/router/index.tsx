@@ -2,7 +2,6 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../hooks/useAuth';
 import { Routes } from '../constants/routesMap';
-import { Text } from 'react-native'; // Importe Text ou View para o Placeholder
 
 import Posts from '../page/posts';
 import PostDetails from '../page/post-details';
@@ -18,15 +17,13 @@ export default function RootNavigator() {
   const { isLoggedIn } = useAuth();
 
   return (
-    
     <Stack.Navigator initialRouteName={Routes.POSTS.name}>
-      
       <Stack.Screen
         name={Routes.POSTS.name}
         component={Posts}
         options={{ title: Routes.POSTS.title }}
       />
-      
+
       <Stack.Screen
         name={Routes.POST_DETAILS.name}
         component={PostDetails}
@@ -45,7 +42,7 @@ export default function RootNavigator() {
             component={PostCreate}
             options={{ title: Routes.DASHBOARD_CREATE_POST.title }}
           />
-          
+
           <Stack.Screen
             name={Routes.DASHBOARD_EDIT_POST.name}
             component={PostEdit}

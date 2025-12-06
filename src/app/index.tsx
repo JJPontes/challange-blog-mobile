@@ -1,9 +1,6 @@
-// App.tsx ou App.js
 import * as React from 'react';
 import RootNavigator from '../router';
 
 export default function Index() {
-  return (    
-      <RootNavigator />
-  );
+  return <RootNavigator />;
 }

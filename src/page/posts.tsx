@@ -8,7 +8,10 @@ export default function Posts() {
     <View>
       <Text>Posts page</Text>
       {/*Botão de teste*/}
-      <NavigateButton title="Go to Post Details" screenName={Routes.POST_DETAILS.name} />
+      <NavigateButton
+        title="Go to Post Details"
+        screenName={Routes.POST_DETAILS.name}
+      />
     </View>
   );
 }
