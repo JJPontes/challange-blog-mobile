@@ -2,13 +2,13 @@
   "expo": {
     "name": "Challange Blog Mobile",
     "slug": "challange-blog-mobile",
+    "web": {
+      "bundler": "metro"
+    },
     "version": "1.0.0",
     "userInterfaceStyle": "automatic",
     "ios": {},
     "android": {},
-    "plugins": [
-      "expo-router",
-      "expo-web-browser"
-    ]
+    "plugins": ["expo-router", "expo-web-browser"]
   }
 }

@@ -12,9 +12,7 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
-const API_URL =
-  (process.env.API_URL as string) ||
-  'http://localhost:3333';
+const API_URL = (process.env.API_URL as string) || 'http://localhost:3333';
 const API_TIMEOUT = Number(process.env.API_TIMEOUT) || 10000;
 
 export const ApiPublic = axios.create({
