@@ -23,7 +23,7 @@ const Menu: React.FC<MenuProps> = () => {
   };
 
   return (
-    <View className="bg-backgroundGray py-1 px-3 flex-row rounded-2xl">
+    <View className="bg-bgGray py-1 px-3 flex-row rounded-2xl">
       <View className="flex-row items-center gap-2">
         <UserCircleIcon size={40} />
       </View>
