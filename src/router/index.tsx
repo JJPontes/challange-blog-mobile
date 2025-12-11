@@ -11,6 +11,7 @@ import PostCreate from '../page/post-create';
 import PostEdit from '../page/post-edit';
 import NotFound from '../page/not-found';
 
+
 const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
