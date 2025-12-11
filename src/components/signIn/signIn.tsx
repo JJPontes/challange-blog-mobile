@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Dimensions } from 
 
 const { height } = Dimensions.get('window');
 
-export default function Login() {
+export default function LoginScreenCustom() {
   const [email, setEmail] = useState('seu.email@escola.edu');
   const [password, setPassword] = useState('.........');
   const [hasError, setHasError] = useState(true);
@@ -28,7 +28,7 @@ export default function Login() {
       >
         
  
-        <View className="bg-white rounded-lg p-6  w-full max-w-sm self-center">
+        <View className="bg-white rounded-lg p-6 shadow-md w-full max-w-sm self-center">
           
      
           <Text className="text-3xl font-bold text-gray-800 mb-2">
