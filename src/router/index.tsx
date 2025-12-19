@@ -10,6 +10,7 @@ import Dashboard from '../page/dashboard';
 import PostCreate from '../page/post-create';
 import PostEdit from '../page/post-edit';
 import NotFound from '../page/not-found';
+import UserCreate from '../page/user-create';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,14 @@ export default function RootNavigator() {
 
   return (
     <Stack.Navigator initialRouteName={Routes.POSTS.name}>
+      <Stack.Screen
+        name="UserCreate"
+        component={UserCreate}
+        options={{ 
+          headerShown: false 
+        }}
+      />
+
       <Stack.Screen
         name={Routes.POSTS.name}
         component={Posts}
