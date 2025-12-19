@@ -5,6 +5,8 @@ import type {
 } from 'axios';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// Se estiver usando react-native-dotenv ou similar para as envs
+import { API_URL, API_TIMEOUT } from '@env';
 
 export interface ApiResponse<T> {
   data: T;
@@ -12,34 +14,30 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
-const API_URL = (process.env.API_URL as string) || 'http://localhost:3333';
-const API_TIMEOUT = Number(process.env.API_TIMEOUT) || 10000;
-
-export const ApiPublic = axios.create({
+// Configurações base
+const config = {
   baseURL: API_URL,
-  timeout: API_TIMEOUT,
+  timeout: Number(API_TIMEOUT) || 10000,
   headers: { 'Content-Type': 'application/json' },
-});
+};
 
-export const ApiPrivate = axios.create({
-  baseURL: API_URL,
-  timeout: API_TIMEOUT,
-  headers: { 'Content-Type': 'application/json' },
-});
+export const ApiPublic = axios.create(config);
+export const ApiPrivate = axios.create(config);
 
+/**
+ * Interceptor para requisições privadas
+ * No React Native, o AsyncStorage é assíncrono, 
+ * então o interceptor deve ser async.
+ */
 ApiPrivate.interceptors.request.use(
-  async (
-    config: InternalAxiosRequestConfig
-  ): Promise<InternalAxiosRequestConfig> => {
+  async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
     try {
       const token = await AsyncStorage.getItem('token');
-      if (token) {
-        config.headers = config.headers ?? {};
-        (config.headers as Record<string, string>)['Authorization'] =
-          `Bearer ${token}`;
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
-    } catch {
-      // ignore error reading token
+    } catch (error) {
+      console.error('Erro ao recuperar token', error);
     }
     return config;
   },
@@ -73,13 +71,16 @@ async function handleRequest<T>(
     return {
       data: res.data,
       status: res.status,
-      message: (res.data as unknown as { message?: string })?.message,
+      message: (res.data as any)?.message,
     };
   } catch (err) {
+    // No mobile, é comum fazer log do erro para debug
     throw new Error(getErrorMessage(err));
   }
 }
-type QueryParams = URLSearchParams | Record<string, string | number | boolean>;
+
+// No React Native, preferimos Record ou o tipo do Axios para Params
+type QueryParams = Record<string, string | number | boolean>;
 
 export const get = async <T>(
   url: string,

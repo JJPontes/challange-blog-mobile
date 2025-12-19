@@ -6,4 +6,5 @@ export const colors = {
   textGray: '#64748B',
   blueDark: '#1E293B',
   bgGray: '#EEF2FF',
+  dangerous: '#DC2626',
 };

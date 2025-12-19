@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, StatusBar, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Navbar from '../components/header/navbar';
 
 type Props = {
   children: React.ReactNode;
@@ -16,7 +15,7 @@ export default function BaseLayout({
 
   const containerStyle = {
     flex: 1,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#F1F5F9',
     paddingTop: disableVerticalPadding ? 0 : insets.top,
     paddingBottom: disableVerticalPadding ? 0 : insets.bottom,
   };
@@ -24,7 +23,6 @@ export default function BaseLayout({
   return (
     <View style={containerStyle}>
       <StatusBar barStyle="dark-content" />
-      <Navbar />
       <View style={styles.content}>{children}</View>
     </View>
   );
@@ -33,6 +31,5 @@ export default function BaseLayout({
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    paddingHorizontal: 20,
   },
 });
