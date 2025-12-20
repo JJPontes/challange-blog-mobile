@@ -5,18 +5,25 @@ import type {
 } from 'axios';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// Se estiver usando react-native-dotenv ou similar para as envs
+import { Platform } from 'react-native';
 import { API_URL, API_TIMEOUT } from '@env';
 
+const getBaseUrl = () => {
+  if (__DEV__) {
+    return Platform.OS === 'android' 
+      ? 'http://192.168.1.108:3001'
+      : 'http://localhost:3001';
+  }
+  return API_URL;
+};
 export interface ApiResponse<T> {
   data: T;
   status: number;
   message?: string;
 }
 
-// Configurações base
 const config = {
-  baseURL: API_URL,
+  baseURL: getBaseUrl(),
   timeout: Number(API_TIMEOUT) || 10000,
   headers: { 'Content-Type': 'application/json' },
 };
@@ -24,11 +31,6 @@ const config = {
 export const ApiPublic = axios.create(config);
 export const ApiPrivate = axios.create(config);
 
-/**
- * Interceptor para requisições privadas
- * No React Native, o AsyncStorage é assíncrono, 
- * então o interceptor deve ser async.
- */
 ApiPrivate.interceptors.request.use(
   async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
     try {
@@ -74,12 +76,10 @@ async function handleRequest<T>(
       message: (res.data as any)?.message,
     };
   } catch (err) {
-    // No mobile, é comum fazer log do erro para debug
     throw new Error(getErrorMessage(err));
   }
 }
 
-// No React Native, preferimos Record ou o tipo do Axios para Params
 type QueryParams = Record<string, string | number | boolean>;
 
 export const get = async <T>(

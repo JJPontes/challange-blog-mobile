@@ -7,8 +7,8 @@ import {
   ScrollView,
   Dimensions,
   StyleSheet,
+  Alert,
 } from 'react-native';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -19,7 +19,6 @@ import type { LoginRequest } from '../types/auth';
 
 type NavigationProps = NativeStackNavigationProp<any>;
 
-// 1. Importação dos ícones do Phosphor
 import { Eye, EyeSlash } from 'phosphor-react-native';
 
 const { height } = Dimensions.get('window');
@@ -33,31 +32,25 @@ export default function SignIn() {
   const navigation = useNavigation<NavigationProps>();
   const { login } = useAuth();
 
-  const validationSchema = Yup.object({
-    username: Yup.string()
-      .required('O email de usuário é obrigatório')
-      .email('Digite um email válido'),
-    password: Yup.string()
-      .min(6, 'A senha deve ter no mínimo 6 caracteres')
-      .required('A senha é obrigatória'),
-  });
 
-  const handleSubmit = async (values: LoginRequest) => {
-    setLoading(true);
-    alert('Teste de alerta');
-    try {
-      const response = await sendLogin(values);
-      alert('Login bem-sucedido');
-      login(response.data);
+ const handleSubmit = async (values: LoginRequest) => {
+  setLoading(true);
+  try {
+    const response = await sendLogin(values);
+    if (response && response.data) {
+      await login(response.data);
       setHasError(false);
-      return navigation.navigate(Routes.POSTS.name);
-    } catch {
-      setHasError(true);
-      alert('Login mal-sucedido');
-    } finally {
-      setLoading(false);
+      navigation.navigate(Routes.POSTS.name);
+    } else {
+      throw new Error("Dados de resposta vazios");
     }
-  };
+  } catch (err: any) {
+    setHasError(true);
+    Alert.alert("ERRO DE CONEXÃO", "A API respondeu? " + (err.message || "Não"));
+  } finally {
+    setLoading(false);
+  }
+};
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -156,7 +149,7 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
-    paddingRight: 50, // Espaço para o ícone
+    paddingRight: 50,
   },
   eyeButton: {
     position: 'absolute',
