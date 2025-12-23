@@ -5,41 +5,41 @@ import type {
 } from 'axios';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
+import { API_URL, API_TIMEOUT } from '@env';
 
+const getBaseUrl = () => {
+  if (__DEV__) {
+    return Platform.OS === 'android' 
+      ? 'http://192.168.1.108:3001'
+      : 'http://localhost:3001';
+  }
+  return API_URL;
+};
 export interface ApiResponse<T> {
   data: T;
   status: number;
   message?: string;
 }
 
-const API_URL = (process.env.API_URL as string) || 'http://localhost:3333';
-const API_TIMEOUT = Number(process.env.API_TIMEOUT) || 10000;
-
-export const ApiPublic = axios.create({
-  baseURL: API_URL,
-  timeout: API_TIMEOUT,
+const config = {
+  baseURL: getBaseUrl(),
+  timeout: Number(API_TIMEOUT) || 10000,
   headers: { 'Content-Type': 'application/json' },
-});
+};
 
-export const ApiPrivate = axios.create({
-  baseURL: API_URL,
-  timeout: API_TIMEOUT,
-  headers: { 'Content-Type': 'application/json' },
-});
+export const ApiPublic = axios.create(config);
+export const ApiPrivate = axios.create(config);
 
 ApiPrivate.interceptors.request.use(
-  async (
-    config: InternalAxiosRequestConfig
-  ): Promise<InternalAxiosRequestConfig> => {
+  async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
     try {
       const token = await AsyncStorage.getItem('token');
-      if (token) {
-        config.headers = config.headers ?? {};
-        (config.headers as Record<string, string>)['Authorization'] =
-          `Bearer ${token}`;
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
-    } catch {
-      // ignore error reading token
+    } catch (error) {
+      console.error('Erro ao recuperar token', error);
     }
     return config;
   },
@@ -73,13 +73,14 @@ async function handleRequest<T>(
     return {
       data: res.data,
       status: res.status,
-      message: (res.data as unknown as { message?: string })?.message,
+      message: (res.data as any)?.message,
     };
   } catch (err) {
     throw new Error(getErrorMessage(err));
   }
 }
-type QueryParams = URLSearchParams | Record<string, string | number | boolean>;
+
+type QueryParams = Record<string, string | number | boolean>;
 
 export const get = async <T>(
   url: string,

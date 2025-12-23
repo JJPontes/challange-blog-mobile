@@ -3,17 +3,17 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../constants/routesMap';
-import {truncateText} from '../text/limit';
+import { truncateText } from '../text/limit';
 import { Post } from '../../types/post';
 
 type NavigationProps = NativeStackNavigationProp<any>;
 
-const Cards: React.FC<Post> = ({ 
-  id, 
-  title, 
-  content, 
-  is_active, 
-  category_id 
+const Cards: React.FC<Post> = ({
+  id,
+  title,
+  content,
+  is_active,
+  category_id,
 }) => {
   const navigation = useNavigation<NavigationProps>();
   return (
@@ -32,9 +32,7 @@ const Cards: React.FC<Post> = ({
         </Text>
       </View>
       <View className="mt-4">
-        <Text className="text-xl w-200">
-          {truncateText(content, 100)}
-        </Text>
+        <Text className="text-xl w-200">{truncateText(content, 100)}</Text>
       </View>
       <View className="flex-row items-center mt-4 gap-2 justify-between">
         <View className="rounded-full bg-bgGray py-1 px-3 flex-row items-center justify-center">

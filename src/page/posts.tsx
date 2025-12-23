@@ -4,18 +4,19 @@ import Cards from '../components/cards';
 import { Post } from '../types/post';
 
 export default function Posts() {
-
   const newPosts: Post = {
-  id: "abc-123",
-  title: "Leitura obrigatória: Capítulo 2",
-  content: "Leitura do capítulo 3 do livro didático, focando na compreensão de texto e identificação de pontos principais.",
-  is_active: true,
-  category_id: "Português",
-};
+    id: 'abc-123',
+    title: 'Leitura obrigatória: Capítulo 2',
+    content:
+      'Leitura do capítulo 3 do livro didático, focando na compreensão de texto e identificação de pontos principais.',
+    is_active: true,
+    category_id: 'Português',
+  };
   return (
     <View>
-      <Text>Posts page</Text>
-      <Cards {...newPosts} />
+      <Text>Posts page</Text> {/*Botão de teste*/}
+      {/* Temporariamente substituído por Text para isolar erro 'Text strings must be rendered within a <Text> component' */}
+      <Text>Cards desativado para debug</Text>
     </View>
   );
 }

@@ -9,6 +9,10 @@
     "userInterfaceStyle": "automatic",
     "ios": {},
     "android": {},
-    "plugins": ["expo-router", "expo-web-browser"]
+    "plugins": [
+      "expo-router",
+      "expo-web-browser",
+      "expo-secure-store"
+    ]
   }
 }
