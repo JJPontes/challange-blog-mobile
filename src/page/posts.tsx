@@ -14,9 +14,8 @@ export default function Posts() {
   };
   return (
     <View>
-      <Text>Posts page</Text> {/*Botão de teste*/}
-      {/* Temporariamente substituído por Text para isolar erro 'Text strings must be rendered within a <Text> component' */}
-      <Text>Cards desativado para debug</Text>
+      <Text>Posts page</Text>
+      <Cards {...newPosts} />
     </View>
   );
 }

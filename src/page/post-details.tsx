@@ -7,6 +7,10 @@ import {
   ActivityIndicator,
   TouchableOpacity
 } from 'react-native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { Routes } from '../constants/routesMap';
+import { useAuth } from '../hooks/useAuth';
 
 
 interface ContentSection {
@@ -27,13 +31,16 @@ interface Post {
   author: string;
   date: string;
   category: string;
-  imageUrl: string;
   contentSections: ContentSection[];
   comments: Comment[];
   totalComments: number;
 }
 
+type NavigationProps = NativeStackNavigationProp<any>;
+
 export default function PostDetailScreen(): JSX.Element {
+  const navigation = useNavigation<NavigationProps>();
+  const { isLoggedIn } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,8 +51,6 @@ export default function PostDetailScreen(): JSX.Element {
     author: 'Profª Ana Souza',
     date: '18 de março de 2025',
     category: 'História',
-    imageUrl:
-      'https://images.unsplash.com/photo-1581091870627-3a2c1a6c1f0c',
     contentSections: [
       {
         type: 'paragraph',
@@ -113,12 +118,9 @@ export default function PostDetailScreen(): JSX.Element {
   }
 
   return (
-    <ScrollView className="flex-1 bg-white">
+    <ScrollView className="flex-1 bg-bgGray">
+      <View className="p-2 mt-[100px] mx-5 rounded-md bg-white">
       <View className="p-4">
-        <Text className="text-xs font-bold text-blue-600 uppercase">
-          {post.category}
-        </Text>
-
         <Text className="text-2xl font-bold text-gray-800 mt-1">
           {post.title}
         </Text>
@@ -128,10 +130,11 @@ export default function PostDetailScreen(): JSX.Element {
           {post.date}
         </Text>
 
-        <Image
-          source={{ uri: post.imageUrl }}
-          className="w-full h-48 rounded-lg my-6"
-        />
+        <View className="bg-bgGray py-1 px-3 rounded-md self-end my-2">
+          <Text className="text-xs font-bold text-blue-600 uppercase">
+            {post.category}
+          </Text>
+        </View>
 
         {post.contentSections.map((section, index) => (
           <Text
@@ -152,19 +155,17 @@ export default function PostDetailScreen(): JSX.Element {
           </Text>
         </View>
 
-       
 
-        <View className="my-8">
-          <Text className="text-center text-gray-500 mb-4">
-            Faça login para comentar
-          </Text>
 
-          <TouchableOpacity className="bg-orange-600 h-12 rounded-lg items-center justify-center">
-            <Text className="text-white font-semibold">
-              Fazer login
-            </Text>
+        {!isLoggedIn && (
+          <View className="my-8">
+            <TouchableOpacity className="bg-alert h-12 rounded-lg items-center justify-center">
+              <Text className="text-white font-semibold">
+                Faça login para comentar neste post.
+              </Text>
           </TouchableOpacity>
-        </View>
+        </View>) }
+      </View>
       </View>
     </ScrollView>
   );
