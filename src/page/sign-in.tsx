@@ -32,25 +32,27 @@ export default function SignIn() {
   const navigation = useNavigation<NavigationProps>();
   const { login } = useAuth();
 
-
- const handleSubmit = async (values: LoginRequest) => {
-  setLoading(true);
-  try {
-    const response = await sendLogin(values);
-    if (response && response.data) {
-      await login(response.data);
-      setHasError(false);
-      navigation.navigate(Routes.POSTS.name);
-    } else {
-      throw new Error("Dados de resposta vazios");
+  const handleSubmit = async (values: LoginRequest) => {
+    setLoading(true);
+    try {
+      const response = await sendLogin(values);
+      if (response && response.data) {
+        await login(response.data);
+        setHasError(false);
+        navigation.navigate(Routes.POSTS.name);
+      } else {
+        throw new Error('Dados de resposta vazios');
+      }
+    } catch (err: any) {
+      setHasError(true);
+      Alert.alert(
+        'ERRO DE CONEXÃO',
+        'A API respondeu? ' + (err.message || 'Não')
+      );
+    } finally {
+      setLoading(false);
     }
-  } catch (err: any) {
-    setHasError(true);
-    Alert.alert("ERRO DE CONEXÃO", "A API respondeu? " + (err.message || "Não"));
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);

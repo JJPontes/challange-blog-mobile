@@ -4,18 +4,24 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../constants/routesMap';
 import { truncateText } from '../text/limit';
-import { Post } from '../../types/post';
+import { Detail } from '../../types/post';
+import { formatStringForDate } from '../../utils/dateFormat';
+import { useTranslation } from 'react-i18next';
+import TagCategory from '../../components/text/tagCategory';
 
 type NavigationProps = NativeStackNavigationProp<any>;
 
-const Cards: React.FC<Post> = ({
+const Cards: React.FC<Detail> = ({
   id,
   title,
   content,
   is_active,
-  category_id,
+  user_name,
+  category_name,
+  created_at,
 }) => {
   const navigation = useNavigation<NavigationProps>();
+  const { t, i18n } = useTranslation();
   return (
     <View className="rounded-2xl bg-white p-6 max-h-100">
       <View className="flex-row justify-between w-full">
@@ -28,22 +34,32 @@ const Cards: React.FC<Post> = ({
       </View>
       <View className="mt-4">
         <Text className="text-textGray text-md">
-          Por Profª Maria Oliveira {'\u25CF'} 10 de março de 2025
+          Por Profª {user_name} {'\u25CF'} {formatStringForDate(created_at)}
         </Text>
       </View>
       <View className="mt-4">
         <Text className="text-xl w-200">{truncateText(content, 100)}</Text>
       </View>
       <View className="flex-row items-center mt-4 gap-2 justify-between">
-        <View className="rounded-full bg-bgGray py-1 px-3 flex-row items-center justify-center">
-          <Text className="text-md text-blueDark">{category_id}</Text>
-        </View>
+        <TagCategory category={category_name} isLeft={true} />
         <View className="flex-row justify-between">
           <Text className="text-textGray">3 comentários</Text>
           <TouchableOpacity
             className=" underline-none text-base ml-3
                   active:opacity-75 transition-opacity"
-            onPress={() => navigation.navigate(Routes.POST_DETAILS.name)}
+            onPress={() =>
+              navigation.navigate(Routes.POST_DETAILS.name, {
+                detail: {
+                  id,
+                  title,
+                  content,
+                  is_active,
+                  user_name,
+                  category_name,
+                  created_at,
+                },
+              })
+            }
           >
             <Text className="text-linkPrimary">Ler Mais</Text>
           </TouchableOpacity>

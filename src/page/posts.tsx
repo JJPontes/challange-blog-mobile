@@ -1,21 +1,37 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Alert } from 'react-native';
 import Cards from '../components/cards';
-import { Post } from '../types/post';
+import { Detail } from '../types/post';
+import { getPostById } from '../services/postServices';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Posts() {
-  const newPosts: Post = {
-    id: 'abc-123',
-    title: 'Leitura obrigatória: Capítulo 2',
-    content:
-      'Leitura do capítulo 3 do livro didático, focando na compreensão de texto e identificação de pontos principais.',
-    is_active: true,
-    category_id: 'Português',
-  };
+  const [posts, setPosts] = useState<Detail | null>(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await getPostById(
+          '5b0c3a9d-dcd5-4e55-bef2-ac157d3cefe6'
+        );
+        const details = response.data.details;
+        if (details) {
+          setPosts(details as any as Detail);
+        }
+      } catch (err: any) {
+        Alert.alert('Erro ao buscar posts:', err.message);
+      } finally {
+        // Qualquer ação final, se necessário
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
   return (
     <View>
       <Text>Posts page</Text>
-      <Cards {...newPosts} />
+      {posts && <Cards {...posts} />}
     </View>
   );
 }

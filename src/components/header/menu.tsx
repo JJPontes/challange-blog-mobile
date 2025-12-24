@@ -4,7 +4,6 @@ import {
   Text,
   Pressable,
   Alert,
-  StyleSheet,
   GestureResponderEvent,
 } from 'react-native';
 import { UserCircleIcon } from 'phosphor-react-native';
@@ -48,7 +47,9 @@ const Menu: React.FC<MenuProps> = () => {
           <Text className="text-textGray">{'\u25CF'}</Text>
 
           <Pressable onPress={handleLogout}>
-            <Text className="text-textGray text-lg font-bold">{isLoggedIn ? 'Sair' : 'Entrar'} </Text>
+            <Text className="text-textGray text-lg font-bold">
+              {isLoggedIn ? 'Sair' : 'Entrar'}{' '}
+            </Text>
           </Pressable>
         </View>
       </View>

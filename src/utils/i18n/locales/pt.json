@@ -1,0 +1,11 @@
+{
+  "subjects": {
+    "portuguese": "português",
+    "mathematics": "matemática",
+    "history": "história",
+    "geography": "geografia",
+    "science": "ciências",
+    "art": "artes",
+    "physical education": "educação física"
+  }
+}

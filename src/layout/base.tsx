@@ -20,16 +20,18 @@ export default function BaseLayout({
     backgroundColor: backgroundColor,
     paddingTop: disableVerticalPadding ? 0 : insets.top,
     paddingBottom: disableVerticalPadding ? 0 : insets.bottom,
-    paddingLeft: insets.left, 
+    paddingLeft: insets.left,
     paddingRight: insets.right,
   };
 
   return (
     <View style={containerStyle}>
-      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />      
-      <View style={styles.content}>
-        {children}
-      </View>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
+      />
+      <View style={styles.content}>{children}</View>
     </View>
   );
 }

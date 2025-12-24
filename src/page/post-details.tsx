@@ -1,118 +1,41 @@
-import React, { JSX, useEffect, useState } from 'react';
+import React, { JSX } from 'react';
 import {
   View,
   Text,
   ScrollView,
-  Image,
-  ActivityIndicator,
-  TouchableOpacity
+  Pressable,
+  TouchableOpacity,
 } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { Routes } from '../constants/routesMap';
 import { useAuth } from '../hooks/useAuth';
-
-
-interface ContentSection {
-  type: 'heading' | 'paragraph';
-  text: string;
-}
-
-interface Comment {
-  id: number;
-  author: string;
-  date: string;
-  text: string;
-}
-
-interface Post {
-  id: number;
-  title: string;
-  author: string;
-  date: string;
-  category: string;
-  contentSections: ContentSection[];
-  comments: Comment[];
-  totalComments: number;
-}
+import { Detail } from '../types/post';
+import { formatStringForDate } from '../utils/dateFormat';
+import { useTranslation } from 'react-i18next';
+import TagCategory from '../components/text/tagCategory';
+import { ArrowLeft } from 'phosphor-react-native';
 
 type NavigationProps = NativeStackNavigationProp<any>;
 
 export default function PostDetailScreen(): JSX.Element {
   const navigation = useNavigation<NavigationProps>();
+  const { t, i18n } = useTranslation();
   const { isLoggedIn } = useAuth();
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const route = useRoute<any>();
+  const detail: Detail | undefined = route?.params?.detail as
+    | Detail
+    | undefined;
 
-  const fakePostData: Post = {
-    id: 1,
-    title: 'Introdução à Revolução Industrial',
-    author: 'Profª Ana Souza',
-    date: '18 de março de 2025',
-    category: 'História',
-    contentSections: [
-      {
-        type: 'paragraph',
-        text:
-          'Nesta aula vamos compreender o contexto histórico que levou ao surgimento da Revolução Industrial.'
-      },
-      { type: 'heading', text: '1. Contexto histórico' },
-      {
-        type: 'paragraph',
-        text:
-          'No final do século XVIII, a Inglaterra vivia profundas transformações económicas.'
-      },
-      { type: 'heading', text: '2. Impactos sociais' },
-      {
-        type: 'paragraph',
-        text:
-          'A urbanização acelerada e as duras condições de trabalho marcaram este período.'
-      }
-    ],
-    comments: [
-      {
-        id: 1,
-        author: 'João Silva',
-        date: '18 de março de 2025 • 19:42',
-        text:
-          'Professora, pode explicar melhor a diferença entre artesanato e manufatura?'
-      },
-      {
-        id: 2,
-        author: 'Profª Ana Souza',
-        date: '18 de março de 2025 • 20:06',
-        text:
-          'Excelente questão! Vamos aprofundar isso na próxima aula.'
-      }
-    ],
-    totalComments: 12
+  const handleBack = () => {
+    navigation.replace(Routes.POSTS.name);
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      setPost(fakePostData);
-      setLoading(false);
-    }, 1500);
-  }, []);
-
-  if (loading) {
+  if (!detail) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#2563EB" />
-        <Text className="mt-4 text-gray-500">
-          A carregar conteúdo...
-        </Text>
-      </View>
-    );
-  }
-
-  if (error || !post) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <Text className="text-red-500">
-          {error ?? 'Erro ao carregar o post'}
-        </Text>
+        <Text className="text-red-500">Erro ao carregar o Post</Text>
       </View>
     );
   }
@@ -120,52 +43,56 @@ export default function PostDetailScreen(): JSX.Element {
   return (
     <ScrollView className="flex-1 bg-bgGray">
       <View className="p-2 mt-[100px] mx-5 rounded-md bg-white">
-      <View className="p-4">
-        <Text className="text-2xl font-bold text-gray-800 mt-1">
-          {post.title}
-        </Text>
+        <View className="p-4">
+          <View className="flex-row items-center justify-between w-full">
+            <Pressable onPress={handleBack} className="flex-row items-center">
+              <ArrowLeft size={20} color="#6B7280" />
 
-        <Text className="text-gray-500 mt-2">
-          Postado por <Text className="font-semibold">{post.author}</Text> em{' '}
-          {post.date}
-        </Text>
-
-        <View className="bg-bgGray py-1 px-3 rounded-md self-end my-2">
-          <Text className="text-xs font-bold text-blue-600 uppercase">
-            {post.category}
-          </Text>
-        </View>
-
-        {post.contentSections.map((section, index) => (
-          <Text
-            key={index}
-            className={
-              section.type === 'heading'
-                ? 'text-lg font-bold mt-4 mb-2 text-gray-800'
-                : 'text-base text-gray-700 mb-3 leading-relaxed'
-            }
-          >
-            {section.text}
-          </Text>
-        ))}
-
-        <View className="border-t border-gray-200 mt-6 pt-4">
-          <Text className="text-xl font-bold">
-            Comentários ({post.totalComments})
-          </Text>
-        </View>
-
-
-
-        {!isLoggedIn && (
-          <View className="my-8">
-            <TouchableOpacity className="bg-alert h-12 rounded-lg items-center justify-center">
-              <Text className="text-white font-semibold">
-                Faça login para comentar neste post.
+              <Text className="text-textGray text-lg font-bold ml-2">
+                Posts
               </Text>
-          </TouchableOpacity>
-        </View>) }
-      </View>
+            </Pressable>
+
+            <TagCategory category={detail.category_name} isLeft={false} />
+          </View>
+          <Text className="text-2xl font-bold text-gray-800 mt-1">
+            {detail.title}
+          </Text>
+
+          <Text className="text-gray-500 mt-2">
+            Por Profª {detail.user_name} {'\u25CF'}{' '}
+            {formatStringForDate(detail.created_at)}
+          </Text>
+
+          <Text className={'text-lg leading-relaxed text-gray-800'}>
+            {detail.content}
+          </Text>
+
+          <View className="border-t border-gray-200 mt-6 pt-4">
+            <Text className="text-xl font-bold">
+              Comentários ({/*detail.totalComments*/ 12})
+            </Text>
+          </View>
+
+          {isLoggedIn ? (
+            <View className="my-8">
+              <TouchableOpacity className="bg-primary h-12 rounded-lg items-center justify-center">
+                <Text className="text-white font-semibold">Comentar</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View className="my-8">
+              <TouchableOpacity
+                className="bg-alert h-12 rounded-lg items-center justify-center"
+                onPress={() => navigation.navigate(Routes.SIGN_IN.name)}
+              >
+                <Text className="text-white font-semibold">
+                  Faça login para comentar neste Post.
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       </View>
     </ScrollView>
   );
