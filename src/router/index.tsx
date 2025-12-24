@@ -63,6 +63,11 @@ export default function RootNavigator() {
               component={PostEdit}
               options={{ title: Routes.DASHBOARD_EDIT_POST.title }}
             />
+            <Stack.Screen
+              name={Routes.USER_CREATE.name}
+              component={UserCreate}
+              options={{ title: Routes.USER_CREATE.title }}
+            />
           </>
         )}
 

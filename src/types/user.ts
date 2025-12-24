@@ -6,3 +6,10 @@ export interface User {
   email: string;
   roleId: string;
 }
+export interface UserCreate {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  roleName: string;  
+}
