@@ -1,16 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SecureStore } from '../utils/secureStore';
 import type { User } from '../types/user';
 import type { LoginResponse } from '../types/auth';
+import { Alert } from 'react-native';
 
 type UseAuthReturn = {
   isLoggedIn: boolean;
   user: User | null;
   login: (response: LoginResponse) => Promise<void>;
   logout: () => Promise<void>;
+  isLoading: boolean;
 };
 
-const TOKEN_KEY = 'token';
 const USER_KEY = 'user';
 
 function safeParseUser(value: string | null): User | null {
@@ -33,55 +35,60 @@ function safeParseUser(value: string | null): User | null {
 export function useAuth(): UseAuthReturn {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // carrega estado inicial do AsyncStorage
   useEffect(() => {
     let mounted = true;
-    (async () => {
+
+    async function loadInitialState() {
       try {
-        const [token, userJson] = await Promise.all([
-          AsyncStorage.getItem(TOKEN_KEY),
-          AsyncStorage.getItem(USER_KEY),
-        ]);
+        const token = await SecureStore.get();
+        const userJson = await AsyncStorage.getItem(USER_KEY);
         if (!mounted) return;
-        setIsLoggedIn(!!token);
-        setUser(safeParseUser(userJson));
-      } catch {
+        const parsedUser = safeParseUser(userJson);
+        const isUserLoggedIn = !!token && !!parsedUser;
+        setIsLoggedIn(isUserLoggedIn);
+        setUser(isUserLoggedIn ? parsedUser : null);
+      } catch (e) {
+        console.error('Erro ao carregar estado de autenticação:', e);
         if (!mounted) return;
         setIsLoggedIn(false);
         setUser(null);
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  const login = useCallback(async (response: LoginResponse) => {
-    const { token, id, name, email } = response.details;
-    const userData: User = { id, name, email };
-
-    try {
-      await AsyncStorage.setItem(TOKEN_KEY, token);
-      await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
-    } catch {
-      // falha no armazenamento: ainda atualiza estado local para UX
     }
 
-    setUser(userData);
-    setIsLoggedIn(true);
+    loadInitialState();
+  }, []);
+
+  const login = useCallback(async (response: any) => {
+    try {
+      const data = response?.data ? response.data : response;
+
+      const { token, id, name, email, roleId } = data.details;
+      const userData: User = { id, name, email, roleId };
+      setUser(userData);
+      setIsLoggedIn(true);
+      await SecureStore.set(token);
+      await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
+    } catch (e: any) {
+      Alert.alert('ERRO NO CATCH', e.message || 'Erro desconhecido');
+    }
   }, []);
 
   const logout = useCallback(async () => {
-    try {
-      await AsyncStorage.removeItem(TOKEN_KEY);
-      await AsyncStorage.removeItem(USER_KEY);
-    } catch {
-      // ignora erro de remoção
-    }
     setUser(null);
     setIsLoggedIn(false);
+    try {
+      await SecureStore.remove();
+      await AsyncStorage.removeItem(USER_KEY);
+    } catch (e) {
+      console.error('Erro ao remover dados seguros:', e);
+    }
   }, []);
 
-  return { isLoggedIn, user, login, logout };
+  return { isLoggedIn, user, login, logout, isLoading };
 }

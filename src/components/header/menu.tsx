@@ -4,26 +4,35 @@ import {
   Text,
   Pressable,
   Alert,
-  StyleSheet,
   GestureResponderEvent,
 } from 'react-native';
 import { UserCircleIcon } from 'phosphor-react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Routes } from '../../constants/routesMap';
+import { useAuth } from '../../hooks/useAuth';
 
-interface MenuProps {
-  // Se o Menu precisasse de props como username, seria assim:
-  // username: string;
-  // userId: number;
-}
+type NavigationProps = NativeStackNavigationProp<any>;
+
+interface MenuProps {}
 
 const Menu: React.FC<MenuProps> = () => {
+  const navigation = useNavigation<NavigationProps>();
+  const { logout, isLoggedIn } = useAuth();
+
   const handlePress = (action: string, event?: GestureResponderEvent) => {
     Alert.alert('Ação Pressionada', `Você clicou em: ${action}`, [
       { text: 'OK' },
     ]);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigation.replace(Routes.SIGN_IN.name);
+  };
+
   return (
-    <View className="bg-backgroundGray py-1 px-3 flex-row rounded-2xl">
+    <View className="bg-bgGray py-1 px-3 flex-row rounded-2xl">
       <View className="flex-row items-center gap-2">
         <UserCircleIcon size={40} />
       </View>
@@ -36,8 +45,11 @@ const Menu: React.FC<MenuProps> = () => {
             <Text className="text-textGray text-lg font-bold">Perfil</Text>
           </Pressable>
           <Text className="text-textGray">{'\u25CF'}</Text>
-          <Pressable onPress={event => handlePress('Sair', event)}>
-            <Text className="text-textGray text-lg font-bold">Sair</Text>
+
+          <Pressable onPress={handleLogout}>
+            <Text className="text-textGray text-lg font-bold">
+              {isLoggedIn ? 'Sair' : 'Entrar'}{' '}
+            </Text>
           </Pressable>
         </View>
       </View>
