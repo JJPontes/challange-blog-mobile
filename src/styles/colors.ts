@@ -7,4 +7,5 @@ export const colors = {
   blueDark: '#1E293B',
   bgGray: '#EEF2FF',
   dangerous: '#DC2626',
+  alert: '#F97316',
 };

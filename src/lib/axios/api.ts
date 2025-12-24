@@ -10,8 +10,8 @@ import { API_URL, API_TIMEOUT } from '@env';
 
 const getBaseUrl = () => {
   if (__DEV__) {
-    return Platform.OS === 'android' 
-      ? 'http://192.168.1.108:3001'
+    return Platform.OS === 'android'
+      ? 'http://192.168.1.106:3001'
       : 'http://localhost:3001';
   }
   return API_URL;
@@ -32,7 +32,9 @@ export const ApiPublic = axios.create(config);
 export const ApiPrivate = axios.create(config);
 
 ApiPrivate.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
+  async (
+    config: InternalAxiosRequestConfig
+  ): Promise<InternalAxiosRequestConfig> => {
     try {
       const token = await AsyncStorage.getItem('token');
       if (token && config.headers) {
