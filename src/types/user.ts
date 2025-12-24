@@ -6,10 +6,10 @@ export interface User {
   email: string;
   roleId: string;
 }
-export interface UserCreate {
+export interface CreateUser {
   name: string;
   email: string;
   phone: string;
   password: string;
-  roleName: string;  
+  roleName: string;
 }

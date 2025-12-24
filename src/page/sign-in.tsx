@@ -56,8 +56,14 @@ export default function SignIn() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' || Platform.OS === 'android' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' || Platform.OS === 'android' ? 32 : 20}
+      behavior={
+        Platform.OS === 'ios' || Platform.OS === 'android'
+          ? 'padding'
+          : 'height'
+      }
+      keyboardVerticalOffset={
+        Platform.OS === 'ios' || Platform.OS === 'android' ? 32 : 20
+      }
       className="flex-1 bg-bgGray"
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -68,7 +74,9 @@ export default function SignIn() {
         >
           <View className="flex-1 justify-center items-center p-6">
             <View className="bg-white rounded-md p-8 w-full max-w-sm">
-              <Text className="text-3xl font-bold text-gray-800 mb-2">Entrar</Text>
+              <Text className="text-3xl font-bold text-gray-800 mb-2">
+                Entrar
+              </Text>
               <Text className="text-gray-500 mb-8">
                 Acesse com sua conta de professor ou estudante.
               </Text>

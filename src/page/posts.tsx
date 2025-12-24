@@ -34,7 +34,10 @@ export default function Posts() {
     <View className="mt-[100px]">
       <Text>Posts page</Text>
       {posts && <Cards {...posts} />}
-      <NavigateButton title="Go to Home" screenName={Routes.USER_CREATE.name} />
+      <NavigateButton
+        title="Go to Details"
+        screenName={Routes.USER_CREATE.name}
+      />
     </View>
   );
 }
