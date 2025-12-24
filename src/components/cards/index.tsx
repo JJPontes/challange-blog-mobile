@@ -6,7 +6,6 @@ import { Routes } from '../../constants/routesMap';
 import { truncateText } from '../text/limit';
 import { Detail } from '../../types/post';
 import { formatStringForDate } from '../../utils/dateFormat';
-import { useTranslation } from 'react-i18next';
 import TagCategory from '../../components/text/tagCategory';
 
 type NavigationProps = NativeStackNavigationProp<any>;
@@ -21,7 +20,6 @@ const Cards: React.FC<Detail> = ({
   created_at,
 }) => {
   const navigation = useNavigation<NavigationProps>();
-  const { t, i18n } = useTranslation();
   return (
     <View className="rounded-2xl bg-white p-6 max-h-100">
       <View className="flex-row justify-between w-full">
