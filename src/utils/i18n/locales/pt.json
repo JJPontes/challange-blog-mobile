@@ -7,5 +7,10 @@
     "science": "ciências",
     "art": "artes",
     "physical education": "educação física"
+  },
+  "roles": {
+    "coordinator": "coordenador(a)",
+    "teacher": "professor(a)",
+    "student": "estudante"
   }
 }

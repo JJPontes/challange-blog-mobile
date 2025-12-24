@@ -13,3 +13,7 @@ export interface LoginResponse {
     roleId: string;
   };
 }
+
+export interface StatusResponse {
+  status: string;
+}

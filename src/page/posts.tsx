@@ -4,6 +4,8 @@ import Cards from '../components/cards';
 import { Detail } from '../types/post';
 import { getPostById } from '../services/postServices';
 import { useAuth } from '../hooks/useAuth';
+import NavigateButton from '../components/button/NavigateButton';
+import { Routes } from '../constants/routesMap';
 
 export default function Posts() {
   const [posts, setPosts] = useState<Detail | null>(null);
@@ -29,9 +31,13 @@ export default function Posts() {
   }, []);
 
   return (
-    <View>
+    <View className="mt-[100px]">
       <Text>Posts page</Text>
       {posts && <Cards {...posts} />}
+      <NavigateButton
+        title="Go to Details"
+        screenName={Routes.USER_CREATE.name}
+      />
     </View>
   );
 }
