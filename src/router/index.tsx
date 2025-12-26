@@ -32,35 +32,15 @@ export default function RootNavigator() {
 
       {isLoggedIn ? (
         <>
-          <Stack.Screen
-            name={Routes.DASHBOARD.name}
-            component={Dashboard}
-            options={{ title: Routes.DASHBOARD.title }}
-          />
-          <Stack.Screen
-            name={Routes.DASHBOARD_CREATE_POST.name}
-            component={PostCreate}
-            options={{ title: Routes.DASHBOARD_CREATE_POST.title }}
-          />
-          <Stack.Screen
-            name={Routes.DASHBOARD_EDIT_POST.name}
-            component={PostEdit}
-            options={{ title: Routes.DASHBOARD_EDIT_POST.title }}
-          />
+          <Stack.Screen name={Routes.DASHBOARD.name} component={Dashboard} options={{ title: Routes.DASHBOARD.title }} />
+          <Stack.Screen name={Routes.DASHBOARD_CREATE_POST.name} component={PostCreate} options={{ title: Routes.DASHBOARD_CREATE_POST.title }} />
+          <Stack.Screen name={Routes.DASHBOARD_EDIT_POST.name} component={PostEdit} options={{ title: Routes.DASHBOARD_EDIT_POST.title }} />
         </>
       ) : (
-        <Stack.Screen
-          name={Routes.SIGN_IN.name}
-          component={SignIn}
-          options={{ headerShown: false }}
-        />
+        <Stack.Screen name={Routes.SIGN_IN.name} component={SignIn} options={{ headerShown: false }} />
       )}
 
-      <Stack.Screen
-        name={Routes.NOT_FOUND.name}
-        component={NotFound}
-        options={{ title: Routes.NOT_FOUND.title }}
-      />
+      <Stack.Screen name={Routes.NOT_FOUND.name} component={NotFound} options={{ title: Routes.NOT_FOUND.title }} />
     </Stack.Navigator>
   );
 }

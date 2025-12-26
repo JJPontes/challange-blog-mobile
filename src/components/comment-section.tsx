@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { colors } from '../styles/colors';
 import { Routes } from '../constants/routesMap';
 
 export default function CommentSection() {
@@ -13,12 +12,13 @@ export default function CommentSection() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.addCommentCard}>
-        <Text style={styles.addTitle}>Adicionar comentário</Text>
-        <View style={styles.inputArea}>
+    <View className="p-4 bg-[#F8F9FA]">
+      <View className="bg-white rounded-lg p-4 border border-[#E1E4E8] mb-4">
+        <Text className="text-[15px] font-bold mb-3 text-[#1A1A1A]">Adicionar comentário</Text>
+        <View className="bg-[#F6F8FA] rounded-md p-3">
           <TextInput
-            style={styles.input}
+            className="text-sm text-[#24292E] min-h-[100px] mb-2"
+            style={{ textAlignVertical: 'top' }}
             placeholder="Escreva aqui sua dúvida ou contribuição..."
             placeholderTextColor="#6A737D"
             multiline
@@ -27,76 +27,23 @@ export default function CommentSection() {
           />
 
           <TouchableOpacity 
-            style={[styles.btnComment, !comment && { opacity: 0.6 }]} 
+            className={`bg-[#0056D2] self-end py-2 px-5 rounded-md ${!comment ? 'opacity-60' : ''}`}
             onPress={() => comment && Alert.alert("Sucesso", "Comentário enviado!")}
           >
-            <Text style={styles.btnCommentText}>Comentar</Text>
+            <Text className="text-white font-bold text-sm">Comentar</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       <TouchableOpacity 
-        style={styles.loginAlert} 
+        className="bg-[#FF7A00] p-4 rounded-md items-center" 
         onPress={handleLoginPress}
         activeOpacity={0.8}
       >
-        <Text style={styles.loginAlertText}>Faça login para comentar neste post.</Text>
+        <Text className="text-white font-bold text-sm">
+          Faça login para comentar neste post.
+        </Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: '#F8F9FA',
-  },
-  addCommentCard: {
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#E1E4E8',
-    marginBottom: 16,
-  },
-  addTitle: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  inputArea: {
-    backgroundColor: '#F6F8FA',
-    borderRadius: 6,
-    padding: 12,
-  },
-  input: {
-    fontSize: 14,
-    color: '#24292E',
-    minHeight: 100,
-    textAlignVertical: 'top',
-    marginBottom: 8,
-  },
-  btnComment: {
-    backgroundColor: colors.primary,
-    alignSelf: 'flex-end',
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 6,
-  },
-  btnCommentText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  loginAlert: {
-    backgroundColor: '#FF7A00',
-    padding: 15,
-    borderRadius: 6,
-    alignItems: 'center',
-  },
-  loginAlertText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-});

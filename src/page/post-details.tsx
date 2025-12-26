@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Post } from '../types/post';
 import BaseLayout from '../layout/base';
@@ -11,56 +11,19 @@ export default function PostDetails() {
 
   return (
     <BaseLayout>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.title}>{post.title}</Text>
-          <Text style={styles.author}>Por: {post.author.name}</Text>
-          <Text style={styles.date}>
+      <ScrollView className="flex-1 bg-white">
+        <View className="p-5">
+          <Text className="text-2xl font-bold text-[#333] mb-2">{post.title}</Text>
+          <Text className="text-base text-[#666] mb-1">Por: {post.author.name}</Text>
+          <Text className="text-sm text-[#999] mb-5">
             {new Date(post.createdAt).toLocaleDateString('pt-BR')}
           </Text>
-          <View style={styles.separator} />
-          <Text style={styles.body}>{post.content}</Text>
+          <View className="h-[1px] bg-[#eee] mb-5" />
+          <Text className="text-lg leading-7 text-[#444]">{post.content}</Text>
         </View>
 
         <CommentSection />
-        
       </ScrollView>
     </BaseLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: '#fff',
-  },
-  content: {
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-  },
-  author: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 5,
-  },
-  date: {
-    fontSize: 14,
-    color: '#999',
-    marginBottom: 20,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#eee',
-    marginBottom: 20,
-  },
-  body: {
-    fontSize: 18,
-    lineHeight: 28,
-    color: '#444',
-  },
-});
