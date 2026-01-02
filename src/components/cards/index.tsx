@@ -38,7 +38,7 @@ const Cards: React.FC<CardsProps> = props => {
 
   const handleEdit = () => {
     setOptionsVisible(false);
-    navigation.navigate(Routes.POST_CREATE_EDIT.name, { detail: props });
+    navigation.navigate(Routes.POST_CREATE_EDIT.name, { id: props.id });
   };
 
   const handleDelete = async (postId: string) => {

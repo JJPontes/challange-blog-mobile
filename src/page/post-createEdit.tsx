@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,15 +9,22 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ArrowLeft } from 'phosphor-react-native';
+import { ArrowLeft, CaretDown, Check } from 'phosphor-react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useAuth } from '../hooks/useAuth';
+import { getAllCategories } from '../services/categoryServices';
+import { Category, CategoryResponse } from '../types/category';
+import { Detail, PostResponse, CreatePost, UpdatePost } from '../types/post';
+import { getPostById, create, update } from '../services/postServices';
 
 type RootStackParamList = {
+  Posts: { refresh?: boolean }; // Adicionado para suportar o retorno com refresh
   PostCreateEdit: { id: string | null };
 };
 
@@ -28,8 +35,10 @@ const validationSchema = Yup.object().shape({
   title: Yup.string()
     .min(3, 'O título deve ter pelo menos 3 caracteres')
     .required('O título é obrigatório'),
+  category_id: Yup.string().required('Selecione uma categoria'),
   content: Yup.string()
     .min(20, 'O conteúdo deve ter pelo menos 20 caracteres')
+    .max(200, 'O conteúdo não pode exceder 200 caracteres')
     .required('O conteúdo é obrigatório'),
 });
 
@@ -38,97 +47,182 @@ const PostCreateEdit: React.FC = () => {
   const route = useRoute<PostCreateEditRouteProp>();
   const { user } = useAuth();
 
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [posts, setPosts] = useState<Detail | undefined>(undefined);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const id = route.params?.id ?? null;
 
-  const handleFormSubmit = async (values: { title: string; content: string }) => {
+  const fetchCategories = async () => {
     try {
-      const payload = {
-        ...values,
-        is_active: true,
-        user_id: user?.id,
-        id: id,
-      };
-      
-      console.log('Payload:', payload);
-      Alert.alert('Sucesso', id ? 'Post atualizado!' : 'Post criado!');
-      navigation.goBack();
+      const response = await getAllCategories();
+      const categoriesData: CategoryResponse = response.data;
+      setCategories(categoriesData.details || []);
+    } catch (err: any) {
+      console.error('Erro ao buscar categorias');
+    }
+  };
+
+  const fetchPosts = async () => {
+    if (!id) return;
+    try {
+      setLoading(true);
+      const response = await getPostById(id);
+      const postsData: PostResponse = response.data;
+
+      if (
+        postsData.details &&
+        typeof postsData.details === 'object' &&
+        'id' in postsData.details
+      ) {
+        setPosts(postsData.details as Detail);
+      } else if (
+        Array.isArray(postsData.details) &&
+        postsData.details.length > 0
+      ) {
+        setPosts(postsData.details[0]);
+      }
+    } catch (err: any) {
+      Alert.alert('Erro', 'Não foi possível carregar os dados da postagem.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+    fetchPosts();
+  }, [id]);
+
+  const handleFormSubmit = async (values: {
+    title: string;
+    content: string;
+    category_id: string;
+  }) => {
+    try {
+      setLoading(true);
+      if (id) {
+        const payload: UpdatePost = {
+          id: id,
+          ...values,
+          is_active: true,
+        };
+        await update(payload);
+      } else {
+        const payload: CreatePost = {
+          ...values,
+          is_active: true,
+          user_id: user?.id || '',
+        };
+        await create(payload);
+      }
+
+      Alert.alert(
+        'Sucesso',
+        id ? 'Post atualizado!' : 'Post criado com sucesso!',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              navigation.navigate('Posts', { refresh: true });
+            },
+          },
+        ]
+      );
     } catch (err: any) {
       Alert.alert('ERRO', err.message || 'Erro ao processar post');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <KeyboardAvoidingView
       behavior={
-              Platform.OS === 'ios' || Platform.OS === 'android'
-                ? 'padding'
-                : 'height'
-            }
-            keyboardVerticalOffset={
-              Platform.OS === 'ios' || Platform.OS === 'android' ? 32 : 20
-            }
-      className="flex-1 bg-bgGray mt-[40px]"
+        Platform.OS === 'ios' || Platform.OS === 'android'
+          ? 'padding'
+          : 'height'
+      }
+      keyboardVerticalOffset={
+        Platform.OS === 'ios' || Platform.OS === 'android' ? 32 : 20
+      }
+      className="flex-1 bg-bgGray mt-[15px]"
     >
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        
-        <View className="mt-24 mx-5 p-2 rounded-md bg-white shadow-sm">
+        <View className="mt-24 mx-5 p-2 rounded-xl bg-white border border-gray-100">
           <View className="p-4">
-            
-            <View className="flex-row items-center w-full mb-4">
+            <View className="flex-row items-center w-full mb-6">
               <Pressable
                 onPress={() => navigation.goBack()}
-                className="flex-row items-center p-1"
+                className="flex-row items-center"
               >
-                <ArrowLeft size={20} color="#6B7280" />
-                <Text className="text-textGray text-lg font-bold ml-2">
-                  Posts
+                <ArrowLeft size={22} color="#4B5563" weight="bold" />
+                <Text className="text-gray-600 text-lg font-semibold ml-2">
+                  Voltar
                 </Text>
               </Pressable>
             </View>
 
-            <View className="mb-6">
-              <Text className="text-xl font-bold text-gray-900">
-                {id ? 'Editar Post' : 'Nova Postagem'}
+            <View className="mb-2">
+              <Text className="text-2xl font-extrabold text-gray-900">
+                {id ? 'Editar Postagem' : 'Nova Postagem'}
               </Text>
-              <Text className="text-sm pt-2 font-semibold text-textGray leading-5">
+              {loading && (
+                <ActivityIndicator
+                  size="small"
+                  color="#6B7280"
+                  className="mt-2 self-start"
+                />
+              )}
+            </View>
+
+            <View className="mb-4">
+              <Text className="text-sm font-semibold text-textGray leading-5">
                 {id ? 'Edite o ' : 'Crie um novo '}
-                conteúdo para seus estudantes. Campos marcados com * são obrigatórios.
+                conteúdo para seus estudantes.
+              </Text>
+              <Text className="text-sm font-semibold text-textGray leading-5">
+                Campos marcados com * são obrigatórios.
               </Text>
             </View>
 
             <Formik
-              initialValues={{ title: '', content: '' }}
+              enableReinitialize={true}
+              initialValues={{
+                title: posts?.title || '',
+                content: posts?.content || '',
+                category_id: posts?.category_id || '',
+              }}
               validationSchema={validationSchema}
               onSubmit={handleFormSubmit}
-              validateOnChange={true}
-              validateOnBlur={true}
             >
               {({
                 handleChange,
                 handleBlur,
                 handleSubmit,
+                setFieldValue,
                 values,
                 errors,
                 touched,
               }) => (
                 <View>
-                  
+
                   <View className="mb-5">
-                    <Text className="text-md font-bold text-gray-700 mb-2 ml-1">
+                    <Text className="text-sm font-bold text-gray-700 mb-2 ml-1">
                       Título *
                     </Text>
                     <TextInput
-                      className={`bg-gray-50 border rounded-md p-4 text-base text-gray-800 ${
+                      className={`bg-gray-50 border rounded-xl p-4 text-base text-gray-800 ${
                         touched.title && errors.title
                           ? 'border-red-500'
-                          : 'border-gray-300 focus:border-blue-500'
+                          : 'border-gray-200'
                       }`}
-                      placeholder="Ex: A arte de contar"
-                      placeholderTextColor="#9ca3af"
+                      placeholder="Título da postagem"
                       onChangeText={handleChange('title')}
                       onBlur={handleBlur('title')}
                       value={values.title}
@@ -139,44 +233,60 @@ const PostCreateEdit: React.FC = () => {
                       </Text>
                     )}
                   </View>
+                  
+                  <View className="mb-5">
+                    <Text className="text-sm font-bold text-gray-700 mb-2 ml-1">
+                      Disciplina *
+                    </Text>
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => setIsModalVisible(true)}
+                      className={`flex-row items-center justify-between bg-gray-50 border rounded-xl p-4 ${
+                        touched.category_id && errors.category_id
+                          ? 'border-red-500'
+                          : 'border-gray-200'
+                      }`}
+                    >
+                      <Text
+                        className={`text-base ${values.category_id ? 'text-gray-800' : 'text-gray-400'}`}
+                      >
+                        {values.category_id
+                          ? categories.find(
+                              cat => cat.id === values.category_id
+                            )?.name
+                          : 'Selecione uma disciplina...'}
+                      </Text>
+                      <CaretDown size={20} color="#6B7280" weight="bold" />
+                    </TouchableOpacity>
+                  </View>
 
-                  <View className="mb-6">
-                    <Text className="text-md font-bold text-gray-700 mb-2 ml-1">
+                  <View className="mb-8">
+                    <Text className="text-sm font-bold text-gray-700 mb-2 ml-1">
                       Conteúdo *
                     </Text>
-
                     <View className="relative">
                       <TextInput
-                        className={`bg-gray-50 border rounded-md p-4 pb-10 text-base text-gray-800 ${
+                        className={`bg-gray-50 border rounded-xl p-4 pb-12 text-base text-gray-800 ${
                           touched.content && errors.content
                             ? 'border-red-500'
-                            : 'border-gray-300 focus:border-blue-500'
+                            : 'border-gray-200'
                         }`}
-                        placeholder="Escreva o conteúdo aqui..."
-                        placeholderTextColor="#9ca3af"
                         onChangeText={handleChange('content')}
                         onBlur={handleBlur('content')}
                         value={values.content}
-                        multiline={true}
-                        numberOfLines={8}
+                        multiline
                         maxLength={200}
                         textAlignVertical="top"
-                        style={{ minHeight: 160 }}
+                        style={{ minHeight: 180 }}
                       />
-
-                      <View className="absolute bottom-2 right-3">
+                      <View className="absolute bottom-3 right-4 bg-white/80 px-2 py-1 rounded-md">
                         <Text
-                          className={`text-xs font-medium ${
-                            values.content.length >= 200
-                              ? 'text-red-500'
-                              : 'text-gray-400'
-                          }`}
+                          className={`text-[10px] font-bold ${values.content.length >= 200 ? 'text-red-500' : 'text-gray-400'}`}
                         >
-                          {values.content.length}/200
+                          {values.content.length} / 200
                         </Text>
                       </View>
                     </View>
-
                     {touched.content && errors.content && (
                       <Text className="text-red-500 text-xs mt-1 ml-1">
                         {errors.content}
@@ -185,11 +295,12 @@ const PostCreateEdit: React.FC = () => {
                   </View>
 
                   <TouchableOpacity
+                    disabled={loading}
+                    activeOpacity={0.8}
                     onPress={() => handleSubmit()}
-                    activeOpacity={0.7}
-                    className="bg-primary py-4 rounded-md items-center shadow-md active:bg-blue-700"
+                    className={`bg-primary py-4 rounded-md items-center shadow-md ${loading ? 'opacity-50' : ''}`}
                   >
-                    <Text className="text-white text-lg font-bold">
+                    <Text className="text-white text-lg font-black">
                       {id ? 'Salvar Alterações' : 'Publicar'}
                     </Text>
                   </TouchableOpacity>
@@ -199,6 +310,32 @@ const PostCreateEdit: React.FC = () => {
           </View>
         </View>
       </ScrollView>
+
+      <Modal visible={isModalVisible} transparent animationType="fade">
+        <Pressable
+          className="flex-1 bg-black/40 justify-end"
+          onPress={() => setIsModalVisible(false)}
+        >
+          <View className="bg-white rounded-t-[32px] p-6 pb-12 shadow-2xl">
+            <Text className="text-xl font-black text-gray-900 mb-5 text-center">
+              Selecione a Disciplina
+            </Text>
+            <ScrollView className="max-h-72">
+              {categories.map(cat => (
+                <TouchableOpacity
+                  key={cat.id}
+                  onPress={() => {
+                    setIsModalVisible(false);
+                  }}
+                  className="p-4 mb-3 bg-gray-50 rounded-2xl"
+                >
+                  <Text className="text-gray-700">{cat.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </Pressable>
+      </Modal>
     </KeyboardAvoidingView>
   );
 };
