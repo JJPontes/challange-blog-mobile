@@ -19,7 +19,16 @@ interface CardsProps extends Detail {
 }
 
 const Cards: React.FC<CardsProps> = props => {
-  const { id, title, content, user_name, category_name, created_at, user_id, onDeleteSuccess } = props;
+  const {
+    id,
+    title,
+    content,
+    user_name,
+    category_name,
+    created_at,
+    user_id,
+    onDeleteSuccess,
+  } = props;
 
   const navigation = useNavigation<NavigationProps>();
   const { user, isLoggedIn } = useAuth();
@@ -29,14 +38,14 @@ const Cards: React.FC<CardsProps> = props => {
 
   const handleEdit = () => {
     setOptionsVisible(false);
-    navigation.navigate(Routes.POST_DETAILS.name, { detail: props });
+    navigation.navigate(Routes.POST_CREATE_EDIT.name, { id: props.id });
   };
 
   const handleDelete = async (postId: string) => {
     setOptionsVisible(false);
     try {
       await remove(postId);
-      onDeleteSuccess(postId); 
+      onDeleteSuccess(postId);
     } catch (error) {
       console.log('Erro ao deletar o post:', error);
       Alert.alert('Erro', 'Não foi possível deletar o post.');
@@ -85,7 +94,9 @@ const Cards: React.FC<CardsProps> = props => {
           <Text className="text-gray-400 text-md mr-3">3 comentários</Text>
           <TouchableOpacity
             className="active:opacity-60"
-            onPress={() => navigation.navigate(Routes.POST_DETAILS.name, { detail: props })}
+            onPress={() =>
+              navigation.navigate(Routes.POST_DETAILS.name, { detail: props })
+            }
           >
             <Text className="text-blue-600 font-bold text-base">Ler Mais</Text>
           </TouchableOpacity>

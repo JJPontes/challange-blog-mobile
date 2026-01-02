@@ -12,9 +12,15 @@ import Cards from '../components/cards';
 import { Detail } from '../types/post';
 import { getall, getPostByUser, getPostFilter } from '../services/postServices';
 import { useAuth } from '../hooks/useAuth';
-import { MagnifyingGlass } from 'phosphor-react-native';
+import { MagnifyingGlass, Plus } from 'phosphor-react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Routes } from '../constants/routesMap';
+
+type NavigationProps = NativeStackNavigationProp<any>;
 
 export default function Posts() {
+  const navigation = useNavigation<NavigationProps>();
   const [posts, setPosts] = useState<Detail[]>([]);
   const [isFocused, setIsFocused] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -81,7 +87,9 @@ export default function Posts() {
   return (
     <View className="flex-1 mt-[70px] pt-3 bg-bgGray">
       <View className="flex-row items-center gap-2 p-2 bg-white">
-        <View className={`flex-row items-center flex-1 bg-gray-50 rounded-lg px-3 h-12 border ml-2 ${isFocused ? 'border-blue-500' : 'border-transparent'}`}>
+        <View
+          className={`flex-row items-center flex-1 bg-gray-50 rounded-lg px-3 h-12 border ml-2 ${isFocused ? 'border-blue-500' : 'border-transparent'}`}
+        >
           <TextInput
             className="flex-1 h-full ml-2 text-base text-gray-800"
             placeholder="Buscar posts..."
@@ -108,9 +116,27 @@ export default function Posts() {
         </TouchableOpacity>
       </View>
 
-      <View className="w-full pt-1">
-        <Text className="text-right text-textGray text-sm px-4 pt-2 italic">
-          {countPost} {countPost === 1 ? 'post encontrado' : 'posts encontrados'}
+      <View
+        className={`w-full flex-row items-center px-4 pt-1 mt-3 ${
+          isLoggedIn ? 'justify-between' : 'justify-end'
+        }`}
+      >
+        {isLoggedIn && (
+          <TouchableOpacity
+            className="flex-row items-center active:opacity-60"
+            onPress={() =>
+              navigation.navigate(Routes.POST_CREATE_EDIT.name, { id: null })
+            }
+          >
+            <Plus size={20} style={{ color: '#2563eb' }} />
+            <Text className="text-blue-600 font-bold text-base ml-1">Post</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Lado Direito: Texto do contador */}
+        <Text className="text-textGray text-sm italic">
+          {countPost}{' '}
+          {countPost === 1 ? 'post encontrado' : 'posts encontrados'}
         </Text>
       </View>
 
@@ -120,8 +146,8 @@ export default function Posts() {
           keyExtractor={(item, index) => `${item.id}-${index}`}
           renderItem={({ item }) => (
             <View className="mb-1">
-              <Cards 
-                {...item} 
+              <Cards
+                {...item}
                 onDeleteSuccess={handleRefreshAfterDelete} // Passando a função aqui
               />
             </View>

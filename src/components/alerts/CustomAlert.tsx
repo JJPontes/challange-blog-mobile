@@ -41,8 +41,8 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
       icon: <Warning color="#F59E0B" size={54} weight="fill" />,
     },
     info: {
-      color: '#3B82F6',
-      icon: <Info color="#3B82F6" size={54} weight="fill" />,
+      color: '#3498db',
+      icon: <Info color="#3498db" size={54} weight="fill" />,
     },
   };
 
@@ -70,7 +70,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
               {onConfirm && (
                 <TouchableOpacity
                   onPress={onConfirm}
-                  className="flex-1 h-14 bg-blue-500 rounded-md items-center justify-center shadow-md"
+                  className="flex-1 h-14 bg-primary rounded-md items-center justify-center shadow-md"
                 >
                   <Text className="text-white font-bold text-lg">
                     {confirmText}

@@ -10,8 +10,7 @@ import Posts from '../page/posts';
 import PostDetails from '../page/post-details';
 import SignIn from '../page/sign-in';
 import Dashboard from '../page/dashboard';
-import PostCreate from '../page/post-create';
-import PostEdit from '../page/post-edit';
+import PostCreateEdit from '../page/post-createEdit';
 import NotFound from '../page/not-found';
 import UserCreate from '../page/user-create';
 
@@ -49,19 +48,14 @@ export default function RootNavigator() {
         {isLoggedIn && (
           <>
             <Stack.Screen
+              name={Routes.POST_CREATE_EDIT.name}
+              component={PostCreateEdit}
+              options={{ title: Routes.POST_CREATE_EDIT.title }}
+            />
+            <Stack.Screen
               name={Routes.DASHBOARD.name}
               component={Dashboard}
               options={{ title: Routes.DASHBOARD.title }}
-            />
-            <Stack.Screen
-              name={Routes.DASHBOARD_CREATE_POST.name}
-              component={PostCreate}
-              options={{ title: Routes.DASHBOARD_CREATE_POST.title }}
-            />
-            <Stack.Screen
-              name={Routes.DASHBOARD_EDIT_POST.name}
-              component={PostEdit}
-              options={{ title: Routes.DASHBOARD_EDIT_POST.title }}
             />
             <Stack.Screen
               name={Routes.USER_CREATE.name}

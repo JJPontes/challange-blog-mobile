@@ -1,6 +1,6 @@
 export interface PostResponse {
   status: string;
-  details: Detail[] | string;
+  details: Detail | Detail[] | string;
   pagination?: Pagination;
 }
 
