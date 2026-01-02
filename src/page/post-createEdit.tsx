@@ -22,9 +22,10 @@ import { getAllCategories } from '../services/categoryServices';
 import { Category, CategoryResponse } from '../types/category';
 import { Detail, PostResponse, CreatePost, UpdatePost } from '../types/post';
 import { getPostById, create, update } from '../services/postServices';
+import { useTranslation } from 'react-i18next';
 
 type RootStackParamList = {
-  Posts: { refresh?: boolean }; // Adicionado para suportar o retorno com refresh
+  Posts: { refresh?: boolean };
   PostCreateEdit: { id: string | null };
 };
 
@@ -46,6 +47,7 @@ const PostCreateEdit: React.FC = () => {
   const navigation = useNavigation<NavigationProps>();
   const route = useRoute<PostCreateEditRouteProp>();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -71,16 +73,10 @@ const PostCreateEdit: React.FC = () => {
       const response = await getPostById(id);
       const postsData: PostResponse = response.data;
 
-      if (
-        postsData.details &&
-        typeof postsData.details === 'object' &&
-        'id' in postsData.details
-      ) {
+      // Ajuste para lidar com retorno em objeto ou array
+      if (postsData.details && typeof postsData.details === 'object' && 'id' in postsData.details) {
         setPosts(postsData.details as Detail);
-      } else if (
-        Array.isArray(postsData.details) &&
-        postsData.details.length > 0
-      ) {
+      } else if (Array.isArray(postsData.details) && postsData.details.length > 0) {
         setPosts(postsData.details[0]);
       }
     } catch (err: any) {
@@ -103,11 +99,7 @@ const PostCreateEdit: React.FC = () => {
     try {
       setLoading(true);
       if (id) {
-        const payload: UpdatePost = {
-          id: id,
-          ...values,
-          is_active: true,
-        };
+        const payload: UpdatePost = { id, ...values, is_active: true };
         await update(payload);
       } else {
         const payload: CreatePost = {
@@ -118,18 +110,12 @@ const PostCreateEdit: React.FC = () => {
         await create(payload);
       }
 
-      Alert.alert(
-        'Sucesso',
-        id ? 'Post atualizado!' : 'Post criado com sucesso!',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              navigation.navigate('Posts', { refresh: true });
-            },
-          },
-        ]
-      );
+      Alert.alert('Sucesso', id ? 'Post atualizado!' : 'Post criado com sucesso!', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Posts', { refresh: true }),
+        },
+      ]);
     } catch (err: any) {
       Alert.alert('ERRO', err.message || 'Erro ao processar post');
     } finally {
@@ -140,13 +126,13 @@ const PostCreateEdit: React.FC = () => {
   return (
     <KeyboardAvoidingView
       behavior={
-        Platform.OS === 'ios' || Platform.OS === 'android'
-          ? 'padding'
-          : 'height'
-      }
-      keyboardVerticalOffset={
-        Platform.OS === 'ios' || Platform.OS === 'android' ? 32 : 20
-      }
+              Platform.OS === 'ios' || Platform.OS === 'android'
+                ? 'padding'
+                : 'height'
+            }
+            keyboardVerticalOffset={
+              Platform.OS === 'ios' || Platform.OS === 'android' ? 32 : 20
+            }
       className="flex-1 bg-bgGray mt-[15px]"
     >
       <ScrollView
@@ -157,14 +143,9 @@ const PostCreateEdit: React.FC = () => {
         <View className="mt-24 mx-5 p-2 rounded-xl bg-white border border-gray-100">
           <View className="p-4">
             <View className="flex-row items-center w-full mb-6">
-              <Pressable
-                onPress={() => navigation.goBack()}
-                className="flex-row items-center"
-              >
+              <Pressable onPress={() => navigation.goBack()} className="flex-row items-center">
                 <ArrowLeft size={22} color="#4B5563" weight="bold" />
-                <Text className="text-gray-600 text-lg font-semibold ml-2">
-                  Voltar
-                </Text>
+                <Text className="text-gray-600 text-lg font-semibold ml-2">Voltar</Text>
               </Pressable>
             </View>
 
@@ -172,19 +153,12 @@ const PostCreateEdit: React.FC = () => {
               <Text className="text-2xl font-extrabold text-gray-900">
                 {id ? 'Editar Postagem' : 'Nova Postagem'}
               </Text>
-              {loading && (
-                <ActivityIndicator
-                  size="small"
-                  color="#6B7280"
-                  className="mt-2 self-start"
-                />
-              )}
+              {loading && <ActivityIndicator size="small" color="#6B7280" className="mt-2 self-start" />}
             </View>
 
             <View className="mb-4">
               <Text className="text-sm font-semibold text-textGray leading-5">
-                {id ? 'Edite o ' : 'Crie um novo '}
-                conteúdo para seus estudantes.
+                {id ? 'Edite o ' : 'Crie um novo '} conteúdo para seus estudantes.
               </Text>
               <Text className="text-sm font-semibold text-textGray leading-5">
                 Campos marcados com * são obrigatórios.
@@ -192,7 +166,7 @@ const PostCreateEdit: React.FC = () => {
             </View>
 
             <Formik
-              enableReinitialize={true}
+              enableReinitialize
               initialValues={{
                 title: posts?.title || '',
                 content: posts?.content || '',
@@ -201,26 +175,14 @@ const PostCreateEdit: React.FC = () => {
               validationSchema={validationSchema}
               onSubmit={handleFormSubmit}
             >
-              {({
-                handleChange,
-                handleBlur,
-                handleSubmit,
-                setFieldValue,
-                values,
-                errors,
-                touched,
-              }) => (
+              {({ handleChange, handleBlur, handleSubmit, setFieldValue, values, errors, touched }) => (
                 <View>
-
+                  
                   <View className="mb-5">
-                    <Text className="text-sm font-bold text-gray-700 mb-2 ml-1">
-                      Título *
-                    </Text>
+                    <Text className="text-sm font-bold text-gray-700 mb-2 ml-1">Título *</Text>
                     <TextInput
                       className={`bg-gray-50 border rounded-xl p-4 text-base text-gray-800 ${
-                        touched.title && errors.title
-                          ? 'border-red-500'
-                          : 'border-gray-200'
+                        touched.title && errors.title ? 'border-red-500' : 'border-gray-200'
                       }`}
                       placeholder="Título da postagem"
                       onChangeText={handleChange('title')}
@@ -228,32 +190,24 @@ const PostCreateEdit: React.FC = () => {
                       value={values.title}
                     />
                     {touched.title && errors.title && (
-                      <Text className="text-red-500 text-xs mt-1 ml-1">
-                        {errors.title}
-                      </Text>
+                      <Text className="text-red-500 text-xs mt-1 ml-1">{errors.title}</Text>
                     )}
                   </View>
-                  
+
                   <View className="mb-5">
-                    <Text className="text-sm font-bold text-gray-700 mb-2 ml-1">
-                      Disciplina *
-                    </Text>
+                    <Text className="text-sm font-bold text-gray-700 mb-2 ml-1">Disciplina *</Text>
                     <TouchableOpacity
                       activeOpacity={0.7}
                       onPress={() => setIsModalVisible(true)}
                       className={`flex-row items-center justify-between bg-gray-50 border rounded-xl p-4 ${
-                        touched.category_id && errors.category_id
-                          ? 'border-red-500'
-                          : 'border-gray-200'
+                        touched.category_id && errors.category_id ? 'border-red-500' : 'border-gray-200'
                       }`}
                     >
                       <Text
-                        className={`text-base ${values.category_id ? 'text-gray-800' : 'text-gray-400'}`}
+                        className={`text-base capitalize ${values.category_id ? 'text-gray-800' : 'text-gray-400'}`}
                       >
                         {values.category_id
-                          ? categories.find(
-                              cat => cat.id === values.category_id
-                            )?.name
+                          ? t(`subjects.${categories.find(cat => cat.id === values.category_id)?.name}`)
                           : 'Selecione uma disciplina...'}
                       </Text>
                       <CaretDown size={20} color="#6B7280" weight="bold" />
@@ -261,15 +215,11 @@ const PostCreateEdit: React.FC = () => {
                   </View>
 
                   <View className="mb-8">
-                    <Text className="text-sm font-bold text-gray-700 mb-2 ml-1">
-                      Conteúdo *
-                    </Text>
+                    <Text className="text-sm font-bold text-gray-700 mb-2 ml-1">Conteúdo *</Text>
                     <View className="relative">
                       <TextInput
                         className={`bg-gray-50 border rounded-xl p-4 pb-12 text-base text-gray-800 ${
-                          touched.content && errors.content
-                            ? 'border-red-500'
-                            : 'border-gray-200'
+                          touched.content && errors.content ? 'border-red-500' : 'border-gray-200'
                         }`}
                         onChangeText={handleChange('content')}
                         onBlur={handleBlur('content')}
@@ -280,17 +230,13 @@ const PostCreateEdit: React.FC = () => {
                         style={{ minHeight: 180 }}
                       />
                       <View className="absolute bottom-3 right-4 bg-white/80 px-2 py-1 rounded-md">
-                        <Text
-                          className={`text-[10px] font-bold ${values.content.length >= 200 ? 'text-red-500' : 'text-gray-400'}`}
-                        >
+                        <Text className={`text-[10px] font-bold ${values.content.length >= 200 ? 'text-red-500' : 'text-gray-400'}`}>
                           {values.content.length} / 200
                         </Text>
                       </View>
                     </View>
                     {touched.content && errors.content && (
-                      <Text className="text-red-500 text-xs mt-1 ml-1">
-                        {errors.content}
-                      </Text>
+                      <Text className="text-red-500 text-xs mt-1 ml-1">{errors.content}</Text>
                     )}
                   </View>
 
@@ -304,38 +250,47 @@ const PostCreateEdit: React.FC = () => {
                       {id ? 'Salvar Alterações' : 'Publicar'}
                     </Text>
                   </TouchableOpacity>
+
+                  <Modal visible={isModalVisible} transparent animationType="fade">
+                    <Pressable className="flex-1 bg-black/40 justify-end" onPress={() => setIsModalVisible(false)}>
+                      <View className="bg-white rounded-t-[32px] p-6 pb-12 shadow-2xl">
+                        <View className="items-center mb-6">
+                          <View className="w-12 h-1.5 bg-gray-200 rounded-full" />
+                        </View>
+                        <Text className="text-xl font-black text-gray-900 mb-5 text-center">
+                          Selecione a Disciplina
+                        </Text>
+                        <ScrollView className="max-h-72">
+                          {categories.map((cat) => {
+                            const isSelected = values.category_id === cat.id;
+                            return (
+                              <TouchableOpacity
+                                key={cat.id}
+                                onPress={() => {
+                                  setFieldValue('category_id', cat.id);
+                                  setIsModalVisible(false);
+                                }}
+                                className={`flex-row items-center justify-between p-4 mb-3 rounded-2xl ${
+                                  isSelected ? 'bg-primary/10 border border-primary' : 'bg-bgGray border border-transparent'
+                                }`}
+                              >
+                                <Text className={`text-base capitalize ${isSelected ? 'text-primary font-bold' : 'text-gray-700'}`}>
+                                  {t(`subjects.${cat.name}`)}
+                                </Text>
+                                {isSelected && <Check size={20} color="#3498db" weight="bold" />}
+                              </TouchableOpacity>
+                            );
+                          })}
+                        </ScrollView>
+                      </View>
+                    </Pressable>
+                  </Modal>
                 </View>
               )}
             </Formik>
           </View>
         </View>
       </ScrollView>
-
-      <Modal visible={isModalVisible} transparent animationType="fade">
-        <Pressable
-          className="flex-1 bg-black/40 justify-end"
-          onPress={() => setIsModalVisible(false)}
-        >
-          <View className="bg-white rounded-t-[32px] p-6 pb-12 shadow-2xl">
-            <Text className="text-xl font-black text-gray-900 mb-5 text-center">
-              Selecione a Disciplina
-            </Text>
-            <ScrollView className="max-h-72">
-              {categories.map(cat => (
-                <TouchableOpacity
-                  key={cat.id}
-                  onPress={() => {
-                    setIsModalVisible(false);
-                  }}
-                  className="p-4 mb-3 bg-gray-50 rounded-2xl"
-                >
-                  <Text className="text-gray-700">{cat.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        </Pressable>
-      </Modal>
     </KeyboardAvoidingView>
   );
 };
