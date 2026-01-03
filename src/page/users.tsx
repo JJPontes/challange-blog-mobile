@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { ScreenWrapper } from '../components/screens/screenWrapper';
 
-export default function NotFound() {
+export default function Users() {
   return (
     <ScreenWrapper>
       <View>
-        <Text>Not Found page</Text>
+        <Text>Users page</Text>
       </View>
     </ScreenWrapper>
   );

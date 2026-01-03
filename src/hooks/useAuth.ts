@@ -68,8 +68,8 @@ export function useAuth(): UseAuthReturn {
     try {
       const data = response?.data ? response.data : response;
 
-      const { token, id, name, email, roleId } = data.details;
-      const userData: User = { id, name, email, roleId };
+      const { token, id, name, email, roleId, roleName } = data.details;
+      const userData: User = { id, name, email, roleId, roleName };
       setUser(userData);
       setIsLoggedIn(true);
       await SecureStore.set(token);
