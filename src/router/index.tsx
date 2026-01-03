@@ -9,10 +9,9 @@ import Navbar from '../components/header/navbar';
 import Posts from '../page/posts';
 import PostDetails from '../page/post-details';
 import SignIn from '../page/sign-in';
-import Dashboard from '../page/dashboard';
 import PostCreateEdit from '../page/post-createEdit';
 import NotFound from '../page/not-found';
-import UserCreate from '../page/user-create';
+import UserCreateEdit from '../page/user-createEdit';
 
 const Stack = createNativeStackNavigator();
 
@@ -53,14 +52,9 @@ export default function RootNavigator() {
               options={{ title: Routes.POST_CREATE_EDIT.title }}
             />
             <Stack.Screen
-              name={Routes.DASHBOARD.name}
-              component={Dashboard}
-              options={{ title: Routes.DASHBOARD.title }}
-            />
-            <Stack.Screen
-              name={Routes.USER_CREATE.name}
-              component={UserCreate}
-              options={{ title: Routes.USER_CREATE.title }}
+              name={Routes.USER_CREATE_EDIT.name}
+              component={UserCreateEdit}
+              options={{ title: Routes.USER_CREATE_EDIT.title }}
             />
           </>
         )}

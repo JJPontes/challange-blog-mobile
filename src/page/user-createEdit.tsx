@@ -30,7 +30,7 @@ const validationSchema = Yup.object().shape({
   phone: Yup.string().optional(),
 });
 
-export default function UserCreate() {
+export default function UserCreateEdit() {
   const navigation = useNavigation<NavigationProp>();
   const [roleType, setRoleType] = useState<'professor' | 'aluno'>('professor');
   const [showPassword, setShowPassword] = useState(false);
