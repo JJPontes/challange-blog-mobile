@@ -5,6 +5,7 @@ export interface User {
   name: string;
   email: string;
   roleId: string;
+  roleName: string;
 }
 export interface CreateUser {
   name: string;

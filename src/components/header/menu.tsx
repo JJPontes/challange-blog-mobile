@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../constants/routesMap';
 import { useAuth } from '../../hooks/useAuth';
+import { truncateText } from '../text/limit';
 
 type NavigationProps = NativeStackNavigationProp<any>;
 
@@ -18,7 +19,7 @@ interface MenuProps {}
 
 const Menu: React.FC<MenuProps> = () => {
   const navigation = useNavigation<NavigationProps>();
-  const { logout, isLoggedIn } = useAuth();
+  const { logout, isLoggedIn, user } = useAuth();
 
   const handlePress = (action: string, event?: GestureResponderEvent) => {
     Alert.alert('Ação Pressionada', `Você clicou em: ${action}`, [
@@ -38,7 +39,9 @@ const Menu: React.FC<MenuProps> = () => {
       </View>
       <View className="flex-col ml-3">
         <View className="flex-row gap-2">
-          <Text className="text-black text-xl font-bold">Prof Ana</Text>
+          <Text className="text-black text-xl font-bold">
+            {truncateText(user?.name || '', 10)}
+          </Text>
         </View>
         <View className="flex-row items-center gap-2 justify-between">
           <Pressable onPress={event => handlePress('Perfil', event)}>
