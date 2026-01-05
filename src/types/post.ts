@@ -1,3 +1,5 @@
+import { Pagination } from './pagination';
+
 export interface PostResponse {
   status: string;
   details: Detail | Detail[] | string;
@@ -17,18 +19,6 @@ export interface Detail {
   category_name: string;
 }
 
-export interface Pagination {
-  total: number;
-  totalPages: number;
-  registersPerPage: number;
-  currentPage: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  nextPage: number;
-  previousPage: number;
-  firstPage: number;
-  lastPage: number;
-}
 
 export interface CreatePost {
   title: string;

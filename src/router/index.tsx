@@ -15,7 +15,7 @@ import UserCreateEdit from '../page/user-createEdit';
 const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
-  const { isLoggedIn } = useAuth();
+  const { user } = useAuth();
 
   return (
     <Stack.Navigator initialRouteName={Routes.POSTS.name}>
@@ -29,12 +29,16 @@ export default function RootNavigator() {
         <Stack.Screen name={Routes.POSTS.name} component={Posts} />
         <Stack.Screen name={Routes.POST_DETAILS.name} component={PostDetails} />
 
-        {isLoggedIn && (
+        {user?.roleName === 'teacher' && (
           <>
             <Stack.Screen
               name={Routes.POST_CREATE_EDIT.name}
               component={PostCreateEdit}
             />
+          </>
+        )}
+        {user?.roleName === 'coordinator' && (
+          <>
             <Stack.Screen name={Routes.USERS.name} component={Users} />
             <Stack.Screen
               name={Routes.USER_CREATE_EDIT.name}

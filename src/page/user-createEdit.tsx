@@ -30,7 +30,7 @@ const validationSchema = Yup.object().shape({
   phone: Yup.string().optional(),
 });
 
-export default function UserCreateEdit() {
+const UserCreateEdit: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [roleType, setRoleType] = useState<'professor' | 'aluno'>('professor');
   const [showPassword, setShowPassword] = useState(false);
@@ -80,7 +80,7 @@ export default function UserCreateEdit() {
             touched,
           }) => (
             <ScrollView
-              contentContainerClassName="flex-grow mt-[100px] pb-8 px-4"
+              contentContainerClassName="flex-grow mt-[35px] pb-8 px-4"
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
             >
@@ -100,7 +100,6 @@ export default function UserCreateEdit() {
                   {roleType === 'professor' ? 'professor' : 'estudante'}
                 </Text>
 
-                {/* Seletor de Cargo */}
                 <View className="flex-row bg-gray-200 rounded-md p-1 mb-4">
                   {(['professor', 'aluno'] as const).map(type => (
                     <TouchableOpacity
@@ -118,7 +117,6 @@ export default function UserCreateEdit() {
                   ))}
                 </View>
 
-                {/* Input Nome */}
                 <View className="mb-4">
                   <Text className="text-md font-bold text-gray-700 mb-2 ml-1">
                     Nome completo
@@ -137,7 +135,6 @@ export default function UserCreateEdit() {
                   )}
                 </View>
 
-                {/* Input Email */}
                 <View className="mb-4">
                   <Text className="text-md font-bold text-gray-700 mb-2 ml-1">
                     E-mail
@@ -158,7 +155,6 @@ export default function UserCreateEdit() {
                   )}
                 </View>
 
-                {/* Input Telefone com Máscara */}
                 <View className="mb-4">
                   <Text className="text-md font-bold text-gray-700 mb-2 ml-1">
                     Telefone
@@ -231,3 +227,5 @@ export default function UserCreateEdit() {
     </ScreenWrapper>
   );
 }
+
+export default UserCreateEdit;
