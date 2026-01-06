@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../constants/routesMap';
@@ -8,9 +8,9 @@ import { Detail } from '../../types/post';
 import { formatStringForDate } from '../../utils/dateFormat';
 import TagCategory from '../../components/text/tagCategory';
 import { useAuth } from '../../hooks/useAuth';
-import { DotsThreeVertical } from 'phosphor-react-native';
+import { DotsThreeVertical, ChatCircleText } from 'phosphor-react-native'; // Importei um ícone de chat
 import CustomAlert from '../alerts/CustomAlert';
-import { remove } from '../../services/postServices';
+import { remove, getCommentsByPostId } from '../../services/postServices';
 
 type NavigationProps = NativeStackNavigationProp<any>;
 
@@ -32,9 +32,29 @@ const Cards: React.FC<CardsProps> = props => {
 
   const navigation = useNavigation<NavigationProps>();
   const { user, isLoggedIn } = useAuth();
+  
+  const [commentCount, setCommentCount] = useState<number>(0);
+  const [loadingComments, setLoadingComments] = useState<boolean>(true);
   const [optionsVisible, setOptionsVisible] = useState(false);
 
   const isOwner = isLoggedIn && user?.id === user_id;
+
+  useEffect(() => {
+    const fetchCommentCount = async () => {
+      try {
+        const response = await getCommentsByPostId(id);
+        if (response.data && Array.isArray(response.data.details)) {
+          setCommentCount(response.data.details.length);
+        }
+      } catch (error) {
+        console.error(`Erro ao buscar comentários do post ${id}:`, error);
+      } finally {
+        setLoadingComments(false);
+      }
+    };
+
+    fetchCommentCount();
+  }, [id]);
 
   const handleEdit = () => {
     setOptionsVisible(false);
@@ -53,7 +73,7 @@ const Cards: React.FC<CardsProps> = props => {
   };
 
   return (
-    <View className="rounded-md bg-white p-6 mb-4 border border-gray-100">
+    <View className="rounded-md bg-white p-6 mb-4 border border-gray-100 shadow-sm">
       <View className="flex-row justify-between items-start w-full">
         <Text className="text-xl font-semibold flex-1 pr-2 text-gray-900">
           {truncateText(title)}
@@ -91,7 +111,18 @@ const Cards: React.FC<CardsProps> = props => {
         <TagCategory category={category_name} isLeft={true} />
 
         <View className="flex-row items-center">
-          <Text className="text-gray-400 text-md mr-3">3 comentários</Text>
+          {/* Contador Dinâmico */}
+          <View className="flex-row items-center mr-4">
+            <ChatCircleText size={18} color="#9CA3AF" />
+            {loadingComments ? (
+              <ActivityIndicator size="small" color="#9CA3AF" className="ml-1" />
+            ) : (
+              <Text className="text-gray-400 text-sm ml-1">
+                {commentCount} {commentCount === 1 ? 'comentário' : 'comentários'}
+              </Text>
+            )}
+          </View>
+
           <TouchableOpacity
             className="active:opacity-60"
             onPress={() =>
