@@ -98,9 +98,11 @@ Pull requests são bem-vindos. Para mudanças de API/variáveis de ambiente, atu
 ---
 
 Se quiser, eu também posso:
+
 - configurar `.env` para diferentes perfis (dev/prod),
 - adicionar instruções em inglês,
 - ou incluir badges e comandos CI.
+
 # challange-blog-mobile
 
 Aplicativo mobile (React Native + Expo) para um blog escolar — desafio técnico.
@@ -137,11 +139,12 @@ cp .env.example .env
 
 O projeto usa `API_URL` do `.env` (importado via `@env`). Há um fallback automático:
 
- Emulador Android (AVD): use `http://10.0.2.2:3001/` (o emulador acessa o host da máquina por esse IP).
+Emulador Android (AVD): use `http://10.0.2.2:3001/` (o emulador acessa o host da máquina por esse IP).
+
 - Emulador iOS / dispositivo desktop: `http://localhost:3001/`.
- Emulador iOS / dispositivo desktop: `http://localhost:3001/`.
+  Emulador iOS / dispositivo desktop: `http://localhost:3001/`.
 - Dispositivo físico Android: use o IP da sua máquina na rede, por exemplo `http://192.168.1.42:3001/`.
- Dispositivo físico Android: use o IP da sua máquina na rede, por exemplo `http://192.168.1.42:3001/`.
+  Dispositivo físico Android: use o IP da sua máquina na rede, por exemplo `http://192.168.1.42:3001/`.
 
 Comandos úteis:
 
@@ -204,6 +207,7 @@ Pull requests são bem-vindos. Para mudanças de API/variáveis de ambiente, atu
 ---
 
 Se quiser, eu também posso:
+
 - configurar `.env` para diferentes perfis (dev/prod),
 - adicionar instruções em inglês,
 - ou incluir badges e comandos CI.

@@ -5,12 +5,13 @@ import type {
 } from 'axios';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import { Platform, Alert } from 'react-native';
 import { API_URL, API_TIMEOUT } from '@env';
+import { SecureStore } from '../../utils/secureStore';
 
 const getBaseUrl = () => {
   if (__DEV__) {
-    return Platform.OS === 'android' 
+    return Platform.OS === 'android'
       ? 'http://192.168.1.108:3001'
       : 'http://localhost:3001';
   }
@@ -32,18 +33,26 @@ export const ApiPublic = axios.create(config);
 export const ApiPrivate = axios.create(config);
 
 ApiPrivate.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
+  async (
+    config: InternalAxiosRequestConfig
+  ): Promise<InternalAxiosRequestConfig> => {
     try {
-      const token = await AsyncStorage.getItem('token');
-      if (token && config.headers) {
+      // 1. Alterado de AsyncStorage para SecureStore
+      const token = await SecureStore.get();
+
+      if (token) {
+        config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${token}`;
+        // Dica: Remova o Alert.alert em produção para não atrapalhar a UX
       }
     } catch (error) {
-      console.error('Erro ao recuperar token', error);
+      console.error('Erro ao recuperar token do SecureStore', error);
     }
     return config;
   },
-  (error: AxiosError) => Promise.reject(error)
+  error => {
+    return Promise.reject(error);
+  }
 );
 
 export function getErrorMessage(error: unknown): string {

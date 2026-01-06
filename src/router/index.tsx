@@ -3,44 +3,58 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../hooks/useAuth';
 import { Routes } from '../constants/routesMap';
 
+import Navbar from '../components/header/navbar';
 import Posts from '../page/posts';
 import PostDetails from '../page/post-details';
 import SignIn from '../page/sign-in';
-import Dashboard from '../page/dashboard';
-import PostCreate from '../page/post-create';
-import PostEdit from '../page/post-edit';
+import PostCreateEdit from '../page/post-createEdit';
 import NotFound from '../page/not-found';
+import Users from '../page/users';
+import UserCreateEdit from '../page/user-createEdit';
 
 const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
-  const { isLoggedIn } = useAuth();
+  const { user } = useAuth();
 
   return (
     <Stack.Navigator initialRouteName={Routes.POSTS.name}>
-      <Stack.Screen
-        name={Routes.POSTS.name}
-        component={Posts}
-        options={{ title: Routes.POSTS.title }}
-      />
+      <Stack.Group
+        screenOptions={{
+          headerShown: true,
+          header: () => <Navbar />,
+          headerTransparent: true,
+        }}
+      >
+        <Stack.Screen name={Routes.POSTS.name} component={Posts} />
+        <Stack.Screen name={Routes.POST_DETAILS.name} component={PostDetails} />
+
+        {user?.roleName === 'teacher' && (
+          <>
+            <Stack.Screen
+              name={Routes.POST_CREATE_EDIT.name}
+              component={PostCreateEdit}
+            />
+          </>
+        )}
+        {user?.roleName === 'coordinator' && (
+          <>
+            <Stack.Screen name={Routes.USERS.name} component={Users} />
+            <Stack.Screen
+              name={Routes.USER_CREATE_EDIT.name}
+              component={UserCreateEdit}
+            />
+          </>
+        )}
+
+        <Stack.Screen name={Routes.NOT_FOUND.name} component={NotFound} />
+      </Stack.Group>
 
       <Stack.Screen
-        name={Routes.POST_DETAILS.name}
-        component={PostDetails}
-        options={{ title: Routes.POST_DETAILS.title }}
+        name={Routes.SIGN_IN.name}
+        component={SignIn}
+        options={{ headerShown: false }}
       />
-
-      {isLoggedIn ? (
-        <>
-          <Stack.Screen name={Routes.DASHBOARD.name} component={Dashboard} options={{ title: Routes.DASHBOARD.title }} />
-          <Stack.Screen name={Routes.DASHBOARD_CREATE_POST.name} component={PostCreate} options={{ title: Routes.DASHBOARD_CREATE_POST.title }} />
-          <Stack.Screen name={Routes.DASHBOARD_EDIT_POST.name} component={PostEdit} options={{ title: Routes.DASHBOARD_EDIT_POST.title }} />
-        </>
-      ) : (
-        <Stack.Screen name={Routes.SIGN_IN.name} component={SignIn} options={{ headerShown: false }} />
-      )}
-
-      <Stack.Screen name={Routes.NOT_FOUND.name} component={NotFound} options={{ title: Routes.NOT_FOUND.title }} />
     </Stack.Navigator>
   );
 }

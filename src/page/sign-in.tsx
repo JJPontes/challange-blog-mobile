@@ -6,20 +6,22 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  StyleSheet,
   Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
-import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../hooks/useAuth';
 import { sendLogin } from '../services/authServices';
 import { Routes } from '../constants/routesMap';
 import type { LoginRequest } from '../types/auth';
+import { Eye, EyeSlash } from 'phosphor-react-native';
 
 type NavigationProps = NativeStackNavigationProp<any>;
-
-import { Eye, EyeSlash } from 'phosphor-react-native';
 
 const { height } = Dimensions.get('window');
 
@@ -29,133 +31,135 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [hasError, setHasError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
   const navigation = useNavigation<NavigationProps>();
   const { login } = useAuth();
 
-
- const handleSubmit = async (values: LoginRequest) => {
-  setLoading(true);
-  try {
-    const response = await sendLogin(values);
-    if (response && response.data) {
-      await login(response.data);
-      setHasError(false);
-      navigation.navigate(Routes.POSTS.name);
-    } else {
-      throw new Error("Dados de resposta vazios");
+  const handleSubmit = async (values: LoginRequest) => {
+    setLoading(true);
+    try {
+      const response = await sendLogin(values);
+      if (response && response.data) {
+        await login(response.data);
+        setHasError(false);
+        navigation.navigate(Routes.POSTS.name);
+      } else {
+        throw new Error('Dados de resposta vazios');
+      }
+    } catch (err: any) {
+      setHasError(true);
+      Alert.alert('ERRO DE CONEXÃO', err.message || 'Erro inesperado');
+    } finally {
+      setLoading(false);
     }
-  } catch (err: any) {
-    setHasError(true);
-    Alert.alert("ERRO DE CONEXÃO", "A API respondeu? " + (err.message || "Não"));
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
   };
 
   return (
-    <View className="flex-1 bg-gray-100">
-      <ScrollView
-        contentContainerStyle={{
-          minHeight: height - 200,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <View className="bg-white rounded-lg p-6 w-full max-w-sm self-center">
-          <Text className="text-3xl font-bold text-gray-800 mb-2">Entrar</Text>
-
-          <Text className="text-textGray mb-6">
-            Acesse com sua conta de professor ou estudante.
-          </Text>
-
-          {hasError && (
-            <View className="bg-dangerous rounded-xl p-3 mb-6">
-              <Text className="text-white text-sm font-bold text-center">
-                Email ou senha inválidos. Tente novamente.
+    <KeyboardAvoidingView
+      behavior={
+        Platform.OS === 'ios' || Platform.OS === 'android'
+          ? 'padding'
+          : 'height'
+      }
+      keyboardVerticalOffset={
+        Platform.OS === 'ios' || Platform.OS === 'android' ? 32 : 20
+      }
+      className="flex-1 bg-bgGray"
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          contentContainerStyle={{ minHeight: height }}
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="flex-1 justify-center items-center p-6">
+            <View className="bg-white rounded-md p-8 w-full max-w-sm">
+              <Text className="text-3xl font-bold text-gray-800 mb-2">
+                Entrar
               </Text>
-            </View>
-          )}
+              <Text className="text-gray-500 mb-8">
+                Acesse com sua conta de professor ou estudante.
+              </Text>
 
-          <Text className="text-base text-gray-700 font-semibold mb-1">
-            Email ou usuário
-          </Text>
-          <TextInput
-            className="w-full h-12 border border-gray-300 rounded-md px-4 mb-4 text-base focus:border-blue-500"
-            placeholder="seu.email@escola.edu"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <Text className="text-base text-gray-700 font-semibold mb-1">
-            Senha
-          </Text>
-
-          <View style={styles.passwordContainer}>
-            <TextInput
-              className="h-12 border border-gray-300 rounded-md px-4 text-base focus:border-blue-500"
-              style={styles.passwordInput}
-              placeholder="••••••••"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!isPasswordVisible}
-            />
-
-            <TouchableOpacity
-              style={styles.eyeButton}
-              onPress={togglePasswordVisibility}
-            >
-              {/* 2. Uso do componente Phosphor (Eye ou EyeSlash) */}
-              {isPasswordVisible ? (
-                <Eye size={20} color="#6B7280" weight="bold" />
-              ) : (
-                <EyeSlash size={20} color="#6B7280" weight="bold" />
+              {hasError && (
+                <View className="bg-red-100 border border-red-200 rounded-md p-3 mb-6">
+                  <Text className="text-red-600 text-sm font-semibold text-center">
+                    Email ou senha inválidos.
+                  </Text>
+                </View>
               )}
-            </TouchableOpacity>
-          </View>
-          <View style={{ marginBottom: 24 }} />
 
-          <TouchableOpacity
-            className="bg-blue-600 rounded-md h-10 px-6 items-center justify-center"
-            onPress={() => handleSubmit({ username: email, password })}
-          >
-            <Text className="text-white text-base font-semibold">Entrar</Text>
-          </TouchableOpacity>
-          <View className="flex-row justify-between items-center mt-2">
-            <TouchableOpacity className="self-start">
-              <Text className="text-blue-600 font-semibold text-sm">
-                Esqueci minha{'\n'}senha
-              </Text>
-            </TouchableOpacity>
-            <Text className="text-sm text-textGray ml-5">
-              Apenas usuários autorizados{'\n'} podem acessar.
-            </Text>
+              <View className="mb-5">
+                <Text className="text-sm text-gray-700 font-bold mb-2 ml-1">
+                  Email ou usuário
+                </Text>
+                <TextInput
+                  className="w-full h-14 border border-gray-200 rounded-md px-4 text-base bg-gray-50 focus:border-blue-500 text-gray-800"
+                  placeholder="seu.email@escola.edu"
+                  placeholderTextColor="#9CA3AF"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
+
+              <View className="mb-8">
+                <Text className="text-sm text-gray-700 font-bold mb-2 ml-1">
+                  Senha
+                </Text>
+                <View className="relative flex-row items-center">
+                  <TextInput
+                    className="flex-1 h-14 border border-gray-200 rounded-md px-4 pr-14 text-base bg-gray-50 focus:border-blue-500 text-gray-800"
+                    placeholder="••••••••"
+                    placeholderTextColor="#9CA3AF"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!isPasswordVisible}
+                  />
+                  <TouchableOpacity
+                    className="absolute right-0 w-14 h-14 justify-center items-center"
+                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                    activeOpacity={0.6}
+                  >
+                    {isPasswordVisible ? (
+                      <Eye size={22} color="#6B7280" />
+                    ) : (
+                      <EyeSlash size={22} color="#6B7280" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <TouchableOpacity
+                className={`rounded-md h-14 items-center justify-center shadow-md ${
+                  loading ? 'bg-blue-400' : 'bg-blue-600'
+                }`}
+                onPress={() => handleSubmit({ username: email, password })}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#FFF" />
+                ) : (
+                  <Text className="text-white text-lg font-bold">Entrar</Text>
+                )}
+              </TouchableOpacity>
+
+              <View className="flex-row justify-between items-start mt-8">
+                <TouchableOpacity className="flex-1">
+                  <Text className="text-blue-600 font-bold text-sm">
+                    Esqueci minha{'\n'}senha
+                  </Text>
+                </TouchableOpacity>
+
+                <Text className="flex-1 text-[10px] text-gray-400 text-right leading-3">
+                  Apenas usuários autorizados podem acessar o sistema.
+                </Text>
+              </View>
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  passwordInput: {
-    flex: 1,
-    paddingRight: 50,
-  },
-  eyeButton: {
-    position: 'absolute',
-    right: 15,
-    height: '100%',
-    justifyContent: 'center',
-    paddingHorizontal: 5,
-  },
-});
