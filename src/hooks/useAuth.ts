@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SecureStore } from '../utils/secureStore';
-import type { User } from '../types/user';
+import type { UserLogin } from '../types/user';
 import type { LoginResponse } from '../types/auth';
 import { Alert } from 'react-native';
 
 type UseAuthReturn = {
   isLoggedIn: boolean;
-  user: User | null;
+  user: UserLogin | null;
   login: (response: LoginResponse) => Promise<void>;
   logout: () => Promise<void>;
   isLoading: boolean;
@@ -15,7 +15,7 @@ type UseAuthReturn = {
 
 const USER_KEY = 'user';
 
-function safeParseUser(value: string | null): User | null {
+function safeParseUserLogin(value: string | null): UserLogin | null {
   if (!value) return null;
   try {
     const parsed = JSON.parse(value);
@@ -24,7 +24,7 @@ function safeParseUser(value: string | null): User | null {
       typeof parsed.name === 'string' &&
       typeof parsed.email === 'string'
     ) {
-      return parsed as User;
+      return parsed as UserLogin;
     }
     return null;
   } catch {
@@ -34,7 +34,7 @@ function safeParseUser(value: string | null): User | null {
 
 export function useAuth(): UseAuthReturn {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUserLogin] = useState<UserLogin | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -45,15 +45,15 @@ export function useAuth(): UseAuthReturn {
         const token = await SecureStore.get();
         const userJson = await AsyncStorage.getItem(USER_KEY);
         if (!mounted) return;
-        const parsedUser = safeParseUser(userJson);
-        const isUserLoggedIn = !!token && !!parsedUser;
-        setIsLoggedIn(isUserLoggedIn);
-        setUser(isUserLoggedIn ? parsedUser : null);
+        const parsedUserLogin = safeParseUserLogin(userJson);
+        const isUserLoginLoggedIn = !!token && !!parsedUserLogin;
+        setIsLoggedIn(isUserLoginLoggedIn);
+        setUserLogin(isUserLoginLoggedIn ? parsedUserLogin : null);
       } catch (e) {
         console.error('Erro ao carregar estado de autenticação:', e);
         if (!mounted) return;
         setIsLoggedIn(false);
-        setUser(null);
+        setUserLogin(null);
       } finally {
         if (mounted) {
           setIsLoading(false);
@@ -69,8 +69,8 @@ export function useAuth(): UseAuthReturn {
       const data = response?.data ? response.data : response;
 
       const { token, id, name, email, roleId, roleName } = data.details;
-      const userData: User = { id, name, email, roleId, roleName };
-      setUser(userData);
+      const userData: UserLogin = { id, name, email, roleId, roleName };
+      setUserLogin(userData);
       setIsLoggedIn(true);
       await SecureStore.set(token);
       await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
@@ -80,7 +80,7 @@ export function useAuth(): UseAuthReturn {
   }, []);
 
   const logout = useCallback(async () => {
-    setUser(null);
+    setUserLogin(null);
     setIsLoggedIn(false);
     try {
       await SecureStore.remove();

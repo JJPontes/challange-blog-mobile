@@ -12,7 +12,7 @@ import { SecureStore } from '../../utils/secureStore';
 const getBaseUrl = () => {
   if (__DEV__) {
     return Platform.OS === 'android'
-      ? 'http://192.168.3.49:3001'
+      ? 'http://192.168.1.108:3001'
       : 'http://localhost:3001';
   }
   return API_URL;
