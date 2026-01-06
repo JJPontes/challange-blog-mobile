@@ -1,6 +1,6 @@
 export interface CommentResponse {
   status: string;
-  details: CommentDetail[] | string;
+  details: CommentDetail | CommentDetail[] | string;
 }
 
 export interface CommentDetail {
@@ -13,6 +13,7 @@ export interface CommentDetail {
 }
 
 export interface CreateComment {
+  id: string;
   content: string;
   author: string;
 }
