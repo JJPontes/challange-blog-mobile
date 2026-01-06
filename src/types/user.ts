@@ -29,6 +29,15 @@ export interface CreateUser {
   roleName: string;
 }
 
+export interface UpdateUser {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  roleName: string;
+}
+
+
 export interface UserResponse {
   status: string;
   details: User | User[] | string;
