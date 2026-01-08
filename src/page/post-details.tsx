@@ -80,8 +80,14 @@ export default function PostDetailScreen(): JSX.Element {
   return (
     <ScreenWrapper>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 32 : 20}
+        behavior={
+          Platform.OS === 'ios' || Platform.OS === 'android'
+            ? 'padding'
+            : 'height'
+        }
+        keyboardVerticalOffset={
+          Platform.OS === 'ios' || Platform.OS === 'android' ? 32 : 20
+        }
         style={{ flex: 1 }}
       >
         <ScrollView

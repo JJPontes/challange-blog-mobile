@@ -108,7 +108,14 @@ const UserCreateEdit: React.FC = () => {
   return (
     <ScreenWrapper>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={
+          Platform.OS === 'ios' || Platform.OS === 'android'
+            ? 'padding'
+            : 'height'
+        }
+        keyboardVerticalOffset={
+          Platform.OS === 'ios' || Platform.OS === 'android' ? 32 : 20
+        }
         className="flex-1 bg-bgGray mt-[15px]"
       >
         <ScrollView
