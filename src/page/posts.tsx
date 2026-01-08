@@ -49,7 +49,7 @@ export default function Posts() {
     try {
       setLoading(true);
       let response;
-      if (user?.roleName === 'teacher' && isLoggedIn) {
+      if (user?.roleName?.toLowerCase() === 'teacher' && isLoggedIn) {
         response = await getPostByUser(user.id);
         handleApiResponse(response, true);
       } else {
@@ -123,7 +123,7 @@ export default function Posts() {
             isLoggedIn ? 'justify-between' : 'justify-end'
           }`}
         >
-          {user?.roleName === 'teacher' && (
+          {user?.roleName?.toLowerCase() === 'teacher' && (
             <TouchableOpacity
               className="flex-row items-center active:opacity-60"
               onPress={() =>

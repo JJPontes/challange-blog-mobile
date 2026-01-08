@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../constants/routesMap';
@@ -32,7 +38,7 @@ const Cards: React.FC<CardsProps> = props => {
 
   const navigation = useNavigation<NavigationProps>();
   const { user, isLoggedIn } = useAuth();
-  
+
   const [commentCount, setCommentCount] = useState<number>(0);
   const [loadingComments, setLoadingComments] = useState<boolean>(true);
   const [optionsVisible, setOptionsVisible] = useState(false);
@@ -115,10 +121,15 @@ const Cards: React.FC<CardsProps> = props => {
           <View className="flex-row items-center mr-4">
             <ChatCircleText size={18} color="#9CA3AF" />
             {loadingComments ? (
-              <ActivityIndicator size="small" color="#9CA3AF" className="ml-1" />
+              <ActivityIndicator
+                size="small"
+                color="#9CA3AF"
+                className="ml-1"
+              />
             ) : (
               <Text className="text-gray-400 text-sm ml-1">
-                {commentCount} {commentCount === 1 ? 'comentário' : 'comentários'}
+                {commentCount}{' '}
+                {commentCount === 1 ? 'comentário' : 'comentários'}
               </Text>
             )}
           </View>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../hooks/useAuth';
 import { Routes } from '../constants/routesMap';
@@ -15,10 +16,27 @@ import UserCreateEdit from '../page/user-createEdit';
 const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
-  const { user } = useAuth();
+  const { user, isLoading, isLoggedIn } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#fff',
+        }}
+      >
+        <ActivityIndicator size="large" color="#4F46E5" />
+      </View>
+    );
+  }
 
   return (
-    <Stack.Navigator initialRouteName={Routes.POSTS.name}>
+    <Stack.Navigator
+      initialRouteName={isLoggedIn ? Routes.POSTS.name : Routes.SIGN_IN.name}
+    >
       <Stack.Group
         screenOptions={{
           headerShown: true,
@@ -29,15 +47,14 @@ export default function RootNavigator() {
         <Stack.Screen name={Routes.POSTS.name} component={Posts} />
         <Stack.Screen name={Routes.POST_DETAILS.name} component={PostDetails} />
 
-        {user?.roleName === 'teacher' && (
-          <>
-            <Stack.Screen
-              name={Routes.POST_CREATE_EDIT.name}
-              component={PostCreateEdit}
-            />
-          </>
+        {user?.roleName?.toLowerCase() === 'teacher' && (
+          <Stack.Screen
+            name={Routes.POST_CREATE_EDIT.name}
+            component={PostCreateEdit}
+          />
         )}
-        {user?.roleName === 'coordinator' && (
+
+        {user?.roleName?.toLowerCase() === 'coordinator' && (
           <>
             <Stack.Screen name={Routes.USERS.name} component={Users} />
             <Stack.Screen

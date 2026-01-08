@@ -64,7 +64,7 @@ export default function SignIn() {
       keyboardVerticalOffset={
         Platform.OS === 'ios' || Platform.OS === 'android' ? 32 : 20
       }
-      className="flex-1 bg-bgGray"
+      className="flex-1 bg-bgGray justify-center items-center "
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView

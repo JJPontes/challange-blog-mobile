@@ -43,7 +43,6 @@ export const getPostFilter = (
     limit: limit,
   });
 
-
 export const getCommentsByPostId = (id: string) =>
   get<CommentResponse>(base + `/${id}/comments`, false);
 
@@ -51,7 +50,11 @@ export const create = (postData: CreatePost) =>
   post<PostResponse, CreatePost>(base, postData, true);
 
 export const insertComment = (postData: CreateComment) =>
-  post<CommentResponse, CreateComment>(base + `/${postData.id}/comments`, postData, true);
+  post<CommentResponse, CreateComment>(
+    base + `/${postData.id}/comments`,
+    postData,
+    true
+  );
 
 export const update = (postData: UpdatePost) =>
   patch<PostResponse, UpdatePost>(base + `/${postData.id}`, postData, true);

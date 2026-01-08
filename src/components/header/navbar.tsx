@@ -25,7 +25,7 @@ const Navbar = () => {
           <Menu />
         </View>
       </View>
-      {user?.roleName === 'coordinator' && (
+      {user?.roleName?.toLowerCase() === 'coordinator' && (
         <View className="bg-white p-4">
           <TabBar />
         </View>

@@ -22,7 +22,8 @@ function safeParseUserLogin(value: string | null): UserLogin | null {
     if (
       typeof parsed.id === 'string' &&
       typeof parsed.name === 'string' &&
-      typeof parsed.email === 'string'
+      typeof parsed.email === 'string' &&
+      typeof parsed.roleName === 'string'
     ) {
       return parsed as UserLogin;
     }

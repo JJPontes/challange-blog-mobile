@@ -19,8 +19,8 @@ import { Detail } from '../types/post';
 import { formatStringForDate } from '../utils/dateFormat';
 import TagCategory from '../components/text/tagCategory';
 import { ScreenWrapper } from '../components/screens/screenWrapper';
-import CommentSection from '../components/comment/comment-section'; 
-import { getCommentsByPostId } from '@/src/services/postServices'; 
+import CommentSection from '../components/comment/comment-section';
+import { getCommentsByPostId } from '@/src/services/postServices';
 import { CommentDetail } from '../types/comments';
 
 type NavigationProps = NativeStackNavigationProp<any>;
@@ -29,16 +29,18 @@ export default function PostDetailScreen(): JSX.Element {
   const navigation = useNavigation<NavigationProps>();
   const { isLoggedIn } = useAuth();
   const route = useRoute<any>();
-  
+
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<CommentDetail[]>([]);
   const [loadingComments, setLoadingComments] = useState(true);
 
-  const detail: Detail | undefined = route?.params?.detail as Detail | undefined;
+  const detail: Detail | undefined = route?.params?.detail as
+    | Detail
+    | undefined;
 
   const loadComments = useCallback(async () => {
     if (!detail?.id) return;
-    
+
     try {
       setLoadingComments(true);
       const response = await getCommentsByPostId(detail.id);
@@ -48,10 +50,10 @@ export default function PostDetailScreen(): JSX.Element {
       if (data && Array.isArray(data.details)) {
         setComments(data.details);
       } else {
-        setComments([]); 
+        setComments([]);
       }
     } catch (error) {
-      console.error("Erro ao carregar comentários:", error);
+      console.error('Erro ao carregar comentários:', error);
       setComments([]);
     } finally {
       setLoadingComments(false);
@@ -82,29 +84,36 @@ export default function PostDetailScreen(): JSX.Element {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 32 : 20}
         style={{ flex: 1 }}
       >
-        <ScrollView 
+        <ScrollView
           className="flex-1 bg-bgGray"
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ flexGrow: 1 }}
         >
           <View className="p-2 my-10 mx-5 rounded-md bg-white">
             <View className="p-4">
-              
               <View className="flex-row items-center justify-between w-full">
-                <Pressable onPress={handleBack} className="flex-row items-center">
+                <Pressable
+                  onPress={handleBack}
+                  className="flex-row items-center"
+                >
                   <ArrowLeft size={20} color="#6B7280" />
-                  <Text className="text-textGray text-lg font-bold ml-2">Posts</Text>
+                  <Text className="text-textGray text-lg font-bold ml-2">
+                    Posts
+                  </Text>
                 </Pressable>
                 <TagCategory category={detail.category_name} isLeft={false} />
               </View>
 
-
-              <Text className="text-2xl font-bold text-gray-800 mt-4">{detail.title}</Text>
-              <Text className="text-gray-500 mt-2">
-                Por Profª {detail.user_name} {'\u25CF'} {formatStringForDate(detail.created_at)}
+              <Text className="text-2xl font-bold text-gray-800 mt-4">
+                {detail.title}
               </Text>
-              <Text className="text-lg leading-relaxed text-gray-800 mt-6">{detail.content}</Text>
-
+              <Text className="text-gray-500 mt-2">
+                Por Profª {detail.user_name} {'\u25CF'}{' '}
+                {formatStringForDate(detail.created_at)}
+              </Text>
+              <Text className="text-lg leading-relaxed text-gray-800 mt-6">
+                {detail.content}
+              </Text>
 
               <View className="border-t border-gray-200 mt-8 pt-4">
                 <Text className="text-xl font-bold">
@@ -116,8 +125,8 @@ export default function PostDetailScreen(): JSX.Element {
               {isLoggedIn ? (
                 <View className="my-6">
                   {!showComments ? (
-                    <TouchableOpacity 
-                      onPress={() => setShowComments(true)} 
+                    <TouchableOpacity
+                      onPress={() => setShowComments(true)}
                       className="bg-primary h-12 rounded-lg items-center justify-center"
                     >
                       <Text className="text-white font-semibold">Comentar</Text>
@@ -125,13 +134,17 @@ export default function PostDetailScreen(): JSX.Element {
                   ) : (
                     <View className="mt-2">
                       <View className="flex-row justify-end mb-2">
-                        <TouchableOpacity onPress={() => setShowComments(false)}>
-                          <Text className="text-red-500 font-medium">Cancelar</Text>
+                        <TouchableOpacity
+                          onPress={() => setShowComments(false)}
+                        >
+                          <Text className="text-red-500 font-medium">
+                            Cancelar
+                          </Text>
                         </TouchableOpacity>
                       </View>
-                      
-                      <CommentSection 
-                        id={detail.id} 
+
+                      <CommentSection
+                        id={detail.id}
                         onCommentPosted={() => {
                           loadComments(); // Recarrega a lista após gravar
                           setShowComments(false); // Fecha o formulário
@@ -142,18 +155,29 @@ export default function PostDetailScreen(): JSX.Element {
                 </View>
               ) : (
                 <View className="my-8 p-4 bg-gray-100 rounded-lg">
-                   <Text className="text-gray-500 text-center italic">Faça login para comentar neste post.</Text>
+                  <Text className="text-gray-500 text-center italic">
+                    Faça login para comentar neste post.
+                  </Text>
                 </View>
               )}
 
               <View className="mt-2">
                 {loadingComments ? (
-                  <ActivityIndicator size="small" color="#000" className="my-4" />
+                  <ActivityIndicator
+                    size="small"
+                    color="#000"
+                    className="my-4"
+                  />
                 ) : (
-                  comments.map((item) => (
-                    <View key={item.id} className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  comments.map(item => (
+                    <View
+                      key={item.id}
+                      className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100"
+                    >
                       <View className="flex-row justify-between mb-1">
-                        <Text className="font-bold text-gray-700">{item.author}</Text>
+                        <Text className="font-bold text-gray-700">
+                          {item.author}
+                        </Text>
                         <Text className="text-gray-400 text-[10px]">
                           {formatStringForDate(item.created_at)}
                         </Text>
@@ -163,7 +187,9 @@ export default function PostDetailScreen(): JSX.Element {
                   ))
                 )}
                 {!loadingComments && comments.length === 0 && (
-                  <Text className="text-gray-400 text-center italic mt-4">Nenhum comentário ainda.</Text>
+                  <Text className="text-gray-400 text-center italic mt-4">
+                    Nenhum comentário ainda.
+                  </Text>
                 )}
               </View>
             </View>

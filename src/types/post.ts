@@ -19,7 +19,6 @@ export interface Detail {
   category_name: string;
 }
 
-
 export interface CreatePost {
   title: string;
   content: string;
