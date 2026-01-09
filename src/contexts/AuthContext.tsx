@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SecureStore } from '../utils/secureStore';
+import { Alert } from 'react-native';
 
 const USER_KEY = 'user_data';
 
@@ -27,16 +28,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => { loadStorageData(); }, []);
 
   const login = async (response: any) => {
-    const data = response?.data?.details || response?.details || response;
-    const userData = {
-      id: String(data.id),
-      name: data.name,
-      roleName: data.roleName.toLowerCase().trim(),
-    };
-    
-    await SecureStore.set(data.token);
-    await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
-    setUser(userData);
+    try {
+      const data = response?.data?.details || response?.details || response;
+      const userData = {
+        id: String(data.id),
+        name: data.name,
+        email: data.email,
+        roleName: data.roleName.toLowerCase().trim(),
+      };
+      
+      await SecureStore.set(data.token);
+      await AsyncStorage.setItem(USER_KEY, JSON.stringify(userData));
+      
+      setUser(userData);
+    } catch (e) {
+      Alert.alert("Erro", "Falha ao processar login.");
+    }
   };
 
   const logout = async () => {
@@ -51,6 +58,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
 
 export const useAuth = () => useContext(AuthContext);

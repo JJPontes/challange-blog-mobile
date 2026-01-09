@@ -7,18 +7,13 @@ import {
   GestureResponderEvent,
 } from 'react-native';
 import { UserCircleIcon } from 'phosphor-react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Routes } from '../../constants/routesMap';
 import { useAuth } from '../../contexts/AuthContext';
 import { truncateText } from '../text/limit';
 
-type NavigationProps = NativeStackNavigationProp<any>;
 
 interface MenuProps {}
 
 const Menu: React.FC<MenuProps> = () => {
-  const navigation = useNavigation<NavigationProps>();
   const { logout, isLoggedIn, user } = useAuth();
 
   const handlePress = (action: string, event?: GestureResponderEvent) => {
@@ -29,7 +24,6 @@ const Menu: React.FC<MenuProps> = () => {
 
   const handleLogout = () => {
     logout();
-    navigation.replace(Routes.SIGN_IN.name);
   };
 
   return (

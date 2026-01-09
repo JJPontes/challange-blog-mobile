@@ -13,15 +13,11 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../contexts/AuthContext';
 import { sendLogin } from '../services/authServices';
-import { Routes } from '../constants/routesMap';
 import type { LoginRequest } from '../types/auth';
 import { Eye, EyeSlash } from 'phosphor-react-native';
 
-type NavigationProps = NativeStackNavigationProp<any>;
 
 const { height } = Dimensions.get('window');
 
@@ -32,7 +28,6 @@ export default function SignIn() {
   const [hasError, setHasError] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const navigation = useNavigation<NavigationProps>();
   const { login } = useAuth();
 
   const handleSubmit = async (values: LoginRequest) => {
@@ -42,7 +37,6 @@ export default function SignIn() {
       if (response && response.data) {
         await login(response.data);
         setHasError(false);
-        navigation.navigate(Routes.POSTS.name);
       } else {
         throw new Error('Dados de resposta vazios');
       }
