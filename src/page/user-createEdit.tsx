@@ -21,6 +21,7 @@ import { ScreenWrapper } from '../components/screens/screenWrapper';
 import { maskPhone } from '../utils/phoneFormat';
 import { create, update } from '../services/userService';
 import { User } from '../types/user';
+import { Routes } from '../constants/routesMap';
 
 type RootStackParamList = {
   Users: { refresh?: boolean };
@@ -56,11 +57,10 @@ const UserCreateEdit: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const [roleType, setRoleType] = useState<
-    'aluno' | 'coordenador' | 'professor'
-  >(() => {
-    if (userData?.role_name === 'student') return 'aluno';
-    if (userData?.role_name === 'coordinator') return 'coordenador';
+  const [roleType, setRoleType] = useState<'aluno' | 'coordenador' | 'professor'>(() => {
+    const roleFromApi = userData?.role_name?.toLowerCase().trim();
+    if (roleFromApi === 'student') return 'aluno';
+    if (roleFromApi === 'coordinator') return 'coordenador';
     return 'professor';
   });
 
@@ -68,7 +68,7 @@ const UserCreateEdit: React.FC = () => {
     try {
       setLoading(true);
 
-      const roleMapping = {
+      const roleMapping: Record<string, string> = {
         aluno: 'student',
         coordenador: 'coordinator',
         professor: 'teacher',
@@ -78,7 +78,7 @@ const UserCreateEdit: React.FC = () => {
         name: values.name,
         email: values.email,
         phone: values.phone.replace(/\D/g, ''),
-        role_name: roleMapping[roleType],
+        roleName: roleMapping[roleType],
       };
 
       if (isEdit && userData) {
@@ -94,7 +94,7 @@ const UserCreateEdit: React.FC = () => {
         [
           {
             text: 'OK',
-            onPress: () => navigation.navigate('Users', { refresh: true }),
+            onPress: () => navigation.navigate(Routes.USERS.name as any, { refresh: true }),
           },
         ]
       );
@@ -159,7 +159,7 @@ const UserCreateEdit: React.FC = () => {
                     className={`flex-1 py-3 items-center rounded-lg ${roleType === type ? 'bg-primary' : ''}`}
                   >
                     <Text
-                      className={`text-[11px] font-bold capitalize ${roleType === type ? 'text-white' : 'text-gray-500'}`}
+                      className={`text-sm font-bold capitalize ${roleType === type ? 'text-white' : 'text-gray-500'}`}
                       numberOfLines={1}
                     >
                       {type}
@@ -194,16 +194,16 @@ const UserCreateEdit: React.FC = () => {
                         Nome Completo *
                       </Text>
                       <TextInput
-                        className={`bg-gray-50 border rounded-xl p-4 text-base text-gray-800 ${touched.name && errors.name ? 'border-red-500' : 'border-gray-200'}`}
+                        className={`bg-gray-50 border rounded-xl p-4 text-base text-gray-800 ${
+                          touched.name && errors.name ? 'border-red-500' : 'border-gray-200'
+                        }`}
                         placeholder="Ex: João Silva"
                         onChangeText={handleChange('name')}
                         onBlur={handleBlur('name')}
                         value={values.name}
                       />
                       {touched.name && errors.name && (
-                        <Text className="text-red-500 text-xs mt-1 ml-1">
-                          {errors.name}
-                        </Text>
+                        <Text className="text-red-500 text-xs mt-1 ml-1">{errors.name}</Text>
                       )}
                     </View>
 
@@ -212,7 +212,9 @@ const UserCreateEdit: React.FC = () => {
                         E-mail *
                       </Text>
                       <TextInput
-                        className={`bg-gray-50 border rounded-xl p-4 text-base text-gray-800 ${touched.email && errors.email ? 'border-red-500' : 'border-gray-200'}`}
+                        className={`bg-gray-50 border rounded-xl p-4 text-base text-gray-800 ${
+                          touched.email && errors.email ? 'border-red-500' : 'border-gray-200'
+                        }`}
                         placeholder="exemplo@email.com"
                         keyboardType="email-address"
                         autoCapitalize="none"
@@ -221,9 +223,7 @@ const UserCreateEdit: React.FC = () => {
                         value={values.email}
                       />
                       {touched.email && errors.email && (
-                        <Text className="text-red-500 text-xs mt-1 ml-1">
-                          {errors.email}
-                        </Text>
+                        <Text className="text-red-500 text-xs mt-1 ml-1">{errors.email}</Text>
                       )}
                     </View>
 
@@ -232,7 +232,9 @@ const UserCreateEdit: React.FC = () => {
                         Telefone *
                       </Text>
                       <TextInput
-                        className={`bg-gray-50 border rounded-xl p-4 text-base text-gray-800 ${touched.phone && errors.phone ? 'border-red-500' : 'border-gray-200'}`}
+                        className={`bg-gray-50 border rounded-xl p-4 text-base text-gray-800 ${
+                          touched.phone && errors.phone ? 'border-red-500' : 'border-gray-200'
+                        }`}
                         placeholder="(00) 00000-0000"
                         keyboardType="phone-pad"
                         onChangeText={t => setFieldValue('phone', maskPhone(t))}
@@ -241,9 +243,7 @@ const UserCreateEdit: React.FC = () => {
                         maxLength={15}
                       />
                       {touched.phone && errors.phone && (
-                        <Text className="text-red-500 text-xs mt-1 ml-1">
-                          {errors.phone}
-                        </Text>
+                        <Text className="text-red-500 text-xs mt-1 ml-1">{errors.phone}</Text>
                       )}
                     </View>
 
@@ -254,7 +254,9 @@ const UserCreateEdit: React.FC = () => {
                         </Text>
                         <View className="relative flex-row items-center">
                           <TextInput
-                            className={`flex-1 bg-gray-50 border rounded-xl p-4 pr-14 text-base text-gray-800 ${touched.password && errors.password ? 'border-red-500' : 'border-gray-200'}`}
+                            className={`flex-1 bg-gray-50 border rounded-xl p-4 pr-14 text-base text-gray-800 ${
+                              touched.password && errors.password ? 'border-red-500' : 'border-gray-200'
+                            }`}
                             placeholder="••••••••"
                             secureTextEntry={!showPassword}
                             onChangeText={handleChange('password')}
@@ -273,9 +275,7 @@ const UserCreateEdit: React.FC = () => {
                           </TouchableOpacity>
                         </View>
                         {touched.password && errors.password && (
-                          <Text className="text-red-500 text-xs mt-1 ml-1">
-                            {errors.password}
-                          </Text>
+                          <Text className="text-red-500 text-xs mt-1 ml-1">{errors.password}</Text>
                         )}
                       </View>
                     )}
@@ -284,7 +284,9 @@ const UserCreateEdit: React.FC = () => {
                       disabled={loading}
                       activeOpacity={0.8}
                       onPress={() => handleSubmit()}
-                      className={`bg-primary py-4 rounded-xl items-center shadow-md ${loading ? 'opacity-50' : ''}`}
+                      className={`bg-primary py-4 rounded-xl items-center shadow-md ${
+                        loading ? 'opacity-50' : ''
+                      }`}
                     >
                       {loading ? (
                         <ActivityIndicator color="#FFF" />
