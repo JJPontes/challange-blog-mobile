@@ -11,7 +11,7 @@ import {
 import Cards from '../components/cards';
 import { Detail } from '../types/post';
 import { getall, getPostByUser, getPostFilter } from '../services/postServices';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 import { MagnifyingGlass, Plus } from 'phosphor-react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';

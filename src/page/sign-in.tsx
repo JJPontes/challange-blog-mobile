@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 import { sendLogin } from '../services/authServices';
 import { Routes } from '../constants/routesMap';
 import type { LoginRequest } from '../types/auth';

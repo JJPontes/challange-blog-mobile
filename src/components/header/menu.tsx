@@ -10,7 +10,7 @@ import { UserCircleIcon } from 'phosphor-react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../constants/routesMap';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import { truncateText } from '../text/limit';
 
 type NavigationProps = NativeStackNavigationProp<any>;

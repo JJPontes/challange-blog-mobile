@@ -13,7 +13,7 @@ import { truncateText } from '../text/limit';
 import { Detail } from '../../types/post';
 import { formatStringForDate } from '../../utils/dateFormat';
 import TagCategory from '../../components/text/tagCategory';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import { DotsThreeVertical, ChatCircleText } from 'phosphor-react-native'; // Importei um ícone de chat
 import CustomAlert from '../alerts/CustomAlert';
 import { remove, getCommentsByPostId } from '../../services/postServices';

@@ -11,7 +11,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { CreateComment } from '@/src/types/comments';
 import { insertComment } from '@/src/services/postServices';
-import { useAuth } from '@/src/hooks/useAuth';
+import { useAuth } from '@/src/contexts/AuthContext';
 
 const CommentSchema = Yup.object().shape({
   content: Yup.string()

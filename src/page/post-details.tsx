@@ -14,7 +14,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowLeft } from 'phosphor-react-native';
 
 import { Routes } from '../constants/routesMap';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 import { Detail } from '../types/post';
 import { formatStringForDate } from '../utils/dateFormat';
 import TagCategory from '../components/text/tagCategory';
