@@ -1,4 +1,4 @@
-import { Pagination } from "./pagination";
+import { Pagination } from './pagination';
 
 export type Role = 'professor' | 'aluno';
 
@@ -36,7 +36,6 @@ export interface UpdateUser {
   phone: string;
   roleName: string;
 }
-
 
 export interface UserResponse {
   status: string;

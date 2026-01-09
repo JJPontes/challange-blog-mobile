@@ -11,7 +11,7 @@ import {
 import Cards from '../components/cards';
 import { Detail } from '../types/post';
 import { getall, getPostByUser, getPostFilter } from '../services/postServices';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 import { MagnifyingGlass, Plus } from 'phosphor-react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -49,7 +49,7 @@ export default function Posts() {
     try {
       setLoading(true);
       let response;
-      if (user?.roleName === 'teacher' && isLoggedIn) {
+      if (user?.roleName?.toLowerCase() === 'teacher' && isLoggedIn) {
         response = await getPostByUser(user.id);
         handleApiResponse(response, true);
       } else {
@@ -123,7 +123,7 @@ export default function Posts() {
             isLoggedIn ? 'justify-between' : 'justify-end'
           }`}
         >
-          {user?.roleName === 'teacher' && (
+          {user?.roleName?.toLowerCase() === 'teacher' && (
             <TouchableOpacity
               className="flex-row items-center active:opacity-60"
               onPress={() =>

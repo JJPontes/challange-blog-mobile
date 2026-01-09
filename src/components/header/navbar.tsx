@@ -3,7 +3,7 @@ import { View, Text, Image } from 'react-native';
 import Logo from '../../assets/logo.png';
 import Menu from './menu';
 import TabBar from './tabbar';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar = () => {
   const { user } = useAuth();
@@ -25,7 +25,7 @@ const Navbar = () => {
           <Menu />
         </View>
       </View>
-      {user?.roleName === 'coordinator' && (
+      {user?.roleName?.toLowerCase() === 'coordinator' && (
         <View className="bg-white p-4">
           <TabBar />
         </View>

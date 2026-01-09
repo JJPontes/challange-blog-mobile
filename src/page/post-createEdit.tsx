@@ -17,7 +17,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowLeft, CaretDown, Check } from 'phosphor-react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 import { getAllCategories } from '../services/categoryServices';
 import { Category, CategoryResponse } from '../types/category';
 import { Detail, PostResponse, CreatePost, UpdatePost } from '../types/post';

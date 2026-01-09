@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
@@ -16,7 +16,8 @@ export const ScreenWrapper: React.FC<ScreenWrapperProps> = ({
   const { user } = useAuth();
   const SPACING = 20;
 
-  const navbarHeight = user?.roleName === 'coordinator' ? 100 : 50;
+  const navbarHeight =
+    user?.roleName?.toLowerCase() === 'coordinator' ? 100 : 50;
   const totalPaddingTop = navbarHeight + SPACING;
 
   const baseClasses = `flex-1 ${className}`;
