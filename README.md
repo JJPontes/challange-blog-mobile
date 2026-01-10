@@ -39,7 +39,7 @@ O projeto utiliza uma stack moderna baseada em **Expo** e **React Native**.
 
 1.  **Clone o repositório** e acesse a pasta:
     ```bash
-    git clone <URL_DO_REPOSITORIO>
+    git clone https://github.com/JJPontes/challange-blog-mobile
     cd challange-blog-mobile
     ```
 
