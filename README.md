@@ -1,213 +1,101 @@
-# challange-blog-mobile
+# Challenge Blog Mobile
 
-Aplicativo mobile (React Native + Expo) para um blog escolar — desafio técnico.
+Aplicativo móvel desenvolvido com React Native e Expo para gerenciamento de um blog escolar. Este projeto faz parte de um desafio técnico e demonstra conceitos de autenticação, consumo de API REST, controle de acesso por perfil (Role-Based Access Control) e internacionalização.
 
-## Descrição
+## 🚀 Tecnologias e Bibliotecas
 
-Projeto de exemplo para criação, listagem e edição de posts via API REST.
+O projeto utiliza uma stack moderna baseada em **Expo** e **React Native**.
 
-## Requisitos
+*   **Core**: [React Native](https://reactnative.dev/), [Expo](https://expo.dev/) (SDK 54), [TypeScript](https://www.typescriptlang.org/)
+*   **Navegação**: [React Navigation 7](https://reactnavigation.org/) (Native Stack) e [Expo Router](https://docs.expo.dev/router/introduction/)
+*   **Estilização**: [NativeWind](https://www.nativewind.dev/) (Tailwind CSS) v4
+*   **Gerenciamento de Estado/Auth**: React Context API
+*   **Comunicação com API**: [Axios](https://axios-http.com/)
+*   **Armazenamento Local**:
+    *   `expo-secure-store` (para tokens sensíveis)
+    *   `@react-native-async-storage` (para dados de usuário não sensíveis)
+*   **Formulários**: [Formik](https://formik.org/) e [Yup](https://github.com/jquense/yup) (validação)
+*   **Internacionalização (i18n)**: `i18next`, `react-i18next` (Suporte a PT-BR e EN)
+*   **UI/Icons**: Phosphor React Native
 
-- Node.js
-- Yarn ou npm
-- Expo CLI
-- Android Studio (para emulador AVD) ou um dispositivo Android
+## ✨ Funcionalidades
 
-## Instalação
+*   **Autenticação**: Login com JWT.
+*   **Gestão de Sessão**: Persistência de login automático e Logout.
+*   **Controle de Acesso (RBAC)**:
+    *   **Todos usuários logados**: Visualizar e ler posts.
+    *   **Teacher (Professor)**: Criar e editar postagens.
+    *   **Coordinator (Coordenador)**: Gerenciar usuários (criar e editar usuários).
+*   **Listagens**: Posts com paginação (scroll infinito ou botões) e filtro.
+*   **Internacionalização**: Suporte a múltiplos idiomas configurado.
 
-1. Instale dependências:
+## 🛠️ Pré-requisitos
 
-```bash
-yarn install
-# ou
-npm install
-```
+*   Node.js (LTS recomendado)
+*   Yarn ou npm
+*   Configuração de ambiente para React Native (Android Studio/Emulador ou Expo Go no celular física)
 
-2. Copie o arquivo de exemplo de variáveis de ambiente e ajuste conforme necessário:
+## ⚙️ Configuração e Instalação
 
-```bash
-cp .env.example .env
-# Edite .env (API_URL, etc.)
-```
+1.  **Clone o repositório** e acesse a pasta:
+    ```bash
+    git clone https://github.com/JJPontes/challange-blog-mobile
+    cd challange-blog-mobile
+    ```
 
-## Configurar acesso à API (desenvolvimento)
+2.  **Instale as dependências**:
+    ```bash
+    yarn install
+    # ou
+    npm install
+    ```
 
-O projeto usa `API_URL` do `.env` (importado via `@env`). Há um fallback automático:
+3.  **Configuração de Variáveis de Ambiente**:
+    Crie um arquivo `.env` na raiz do projeto (copie de `.env.example` se existir) com as seguintes chaves:
 
-- Emulador Android (AVD): use `http://10.0.2.2:3001/` (o emulador acessa o host da máquina por esse IP).
-- Emulador iOS / dispositivo desktop: `http://localhost:3001/`.
-- Dispositivo físico Android: use o IP da sua máquina na rede, por exemplo `http://192.168.1.42:3001/`.
+    ```properties
+    API_URL=http://seuiservidor:3001
+    API_TIMEOUT=10000
+    ```
 
-Comandos úteis:
+    > **⚠️ Atenção (Desenvolvimento):** O arquivo `src/lib/axios/api.ts` possui uma lógica que pode sobrescrever a `API_URL` para `localhost` (iOS) ou `192.168...` (Android) quando em modo `__DEV__`. Verifique este arquivo se tiver problemas de conexão.
 
-- Encaminhar porta para o emulador Android (quando necessário):
+## ▶️ Executando o Projeto
 
-```bash
-adb reverse tcp:3001 tcp:3001
-```
-
-- Rodar Expo em modo tunnel (útil se o dispositivo não estiver na mesma rede):
-
-```bash
-yarn start --tunnel
-# ou
-expo start --tunnel
-```
-
-## Variáveis de ambiente
-
-Edite o `API_URL` em `.env` para apontar para sua API local ou remota. Exemplo em `.env.example`:
-
-```
-API_URL=http://localhost:3001/
-API_TIMEOUT=10000
-```
-
-Para dispositivos físicos, substitua por `http://<SEU_IP>:3001/`.
-
-## Executando o app
-
-- Iniciar o Metro/Expo DevTools:
+Para iniciar o servidor de desenvolvimento do Expo:
 
 ```bash
 yarn start
-# ou
-npm run start
 ```
 
-- Abrir no emulador Android:
+Opções adicionais:
 
-```bash
-yarn android
-# ou
-expo start --android
-```
+*   **Android**: `yarn android` (ou pressione `a` no terminal do Metro)
+*   **iOS**: `yarn ios` (apenas macOS)
+*   **Web**: `yarn web`
 
-- Abrir no dispositivo físico: leia o QR do Expo Go (usuário deve selecionar `Connection: LAN` ou `Tunnel` conforme a rede).
-
-## Troubleshooting
-
-- Se o app não consegue alcançar a API no emulador Android, confirme se o servidor está rodando e use `10.0.2.2` como host.
-- Se estiver usando Expo Go e problemas de rede, tente `adb reverse` ou `--tunnel`.
-- Verifique firewalls e se o servidor backend aceita conexões externas.
-
-## Contribuição
-
-Pull requests são bem-vindos. Para mudanças de API/variáveis de ambiente, atualize `.env.example` também.
-
----
-
-Se quiser, eu também posso:
-
-- configurar `.env` para diferentes perfis (dev/prod),
-- adicionar instruções em inglês,
-- ou incluir badges e comandos CI.
-
-# challange-blog-mobile
-
-Aplicativo mobile (React Native + Expo) para um blog escolar — desafio técnico.
-
-## Descrição
-
-Projeto de exemplo para criação, listagem e edição de posts via API REST.
-
-## Requisitos
-
-- Node.js
-- Yarn ou npm
-- Expo CLI
-- Android Studio (para emulador AVD) ou um dispositivo Android
-
-## Instalação
-
-1. Instale dependências:
-
-```bash
-yarn install
-# ou
-npm install
-```
-
-2. Copie o arquivo de exemplo de variáveis de ambiente e ajuste conforme necessário:
-
-```bash
-cp .env.example .env
-# Edite .env (API_URL, etc.)
-```
-
-## Configurar acesso à API (desenvolvimento)
-
-O projeto usa `API_URL` do `.env` (importado via `@env`). Há um fallback automático:
-
-Emulador Android (AVD): use `http://10.0.2.2:3001/` (o emulador acessa o host da máquina por esse IP).
-
-- Emulador iOS / dispositivo desktop: `http://localhost:3001/`.
-  Emulador iOS / dispositivo desktop: `http://localhost:3001/`.
-- Dispositivo físico Android: use o IP da sua máquina na rede, por exemplo `http://192.168.1.42:3001/`.
-  Dispositivo físico Android: use o IP da sua máquina na rede, por exemplo `http://192.168.1.42:3001/`.
-
-Comandos úteis:
-
-- Encaminhar porta para o emulador Android (quando necessário):
-
-```bash
-adb reverse tcp:3001 tcp:3001
-```
-
-- Rodar Expo em modo tunnel (útil se o dispositivo não estiver na mesma rede):
-
-```bash
-yarn start --tunnel
-# ou
-expo start --tunnel
-```
-
-## Variáveis de ambiente
-
-Edite o `API_URL` em `.env` para apontar para sua API local ou remota. Exemplo em `.env.example`:
+## 📂 Estrutura do Projeto
 
 ```
-API_URL=http://localhost:3001/
-API_TIMEOUT=10000
+src/
+├── app/              # Entry point e configuração do Expo Router/Layout
+├── assets/           # Imagens e recursos estáticos
+├── components/       # Componentes reutilizáveis (botões, cards, headers, inputs)
+├── config/           # Configurações gerais
+├── constants/        # Constantes (rotas, chaves de API, etc.)
+├── contexts/         # Context API (AuthContext para estado do usuário)
+├── hooks/            # Custom hooks
+├── layout/           # Componentes estruturais de layout (BaseLayout)
+├── lib/              # Configuração de libs externas (Axios instance)
+├── page/             # Telas da aplicação (Posts, Login, Users, etc.)
+├── router/           # Configuração de navegação (Stack Navigator, Guardas de rota)
+├── services/         # Camada de serviço para chamadas à API
+├── styles/           # Configuração de temas e estilos globais (NativeWind)
+├── types/            # Definições de tipos TypeScript
+└── utils/            # Utilitários (formatação de data, i18n, secureStore)
 ```
 
-Para dispositivos físicos, substitua por `http://<SEU_IP>:3000/`.
-Para dispositivos físicos, substitua por `http://<SEU_IP>:3001/`.
+## 🐛 Troubleshooting
 
-## Executando o app
-
-- Iniciar o Metro/Expo DevTools:
-
-```bash
-yarn start
-# ou
-npm run start
-```
-
-- Abrir no emulador Android:
-
-```bash
-yarn android
-# ou
-expo start --android
-```
-
-- Abrir no dispositivo físico: leia o QR do Expo Go (usuário deve selecionar `Connection: LAN` ou `Tunnel` conforme a rede).
-
-## Troubleshooting
-
-- Se o app não consegue alcançar a API no emulador Android, confirme se o servidor está rodando e use `10.0.2.2` como host.
-- Se estiver usando Expo Go e problemas de rede, tente `adb reverse` ou `--tunnel`.
-- Verifique firewalls e se o servidor backend aceita conexões externas.
-
-## Contribuição
-
-Pull requests são bem-vindos. Para mudanças de API/variáveis de ambiente, atualize `.env.example` também.
-
----
-
-Se quiser, eu também posso:
-
-- configurar `.env` para diferentes perfis (dev/prod),
-- adicionar instruções em inglês,
-- ou incluir badges e comandos CI.
+*   **Erro de conexão com API**: Verifique se o backend está rodando na porta correta (padrão 3001). Se estiver usando emulador Android, lembre-se que `localhost` refere-se ao próprio emulador; use `10.0.2.2` ou o IP da sua máquina.
+*   **Estilos não aplicando (NativeWind)**: Executar com `--clear` pode ajudar a limpar cache do Metro bundler: `yarn start --clear`.
